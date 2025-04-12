@@ -2,6 +2,16 @@
 
 This repository contains my **dotfiles** for configuring the **Hyprland Window Manager** on an **Arch Linux** system. It includes essential configuration files for a **personalized and streamlined** desktop experience.
 
+
+## 🚀 Features  
+
+- **Hyprland WM** – Optimized tiling and workspace management  
+- **Waybar** – Customized status bar with system monitoring  
+- **Kitty & Neovim** – Performance-focused terminal and text editor setup  
+- **Rofi** – Aesthetic and efficient application launcher  
+- **GNU Stow** – Simplified dotfile management and replication across systems  
+
+
 ## 📦 Included Software Packages  
 
 This repository provides configuration files for the following software:
@@ -14,13 +24,6 @@ This repository provides configuration files for the following software:
 - **GNU Stow** – A symlink manager for organizing dotfiles  
 - **Shell Configuration (`bashrc`, `zshrc`)** – Custom shell settings and aliases  
 
-## 🚀 Features  
-
-- **Hyprland WM** – Optimized tiling and workspace management  
-- **Waybar** – Customized status bar with system monitoring  
-- **Kitty & Neovim** – Performance-focused terminal and text editor setup  
-- **Rofi** – Aesthetic and efficient application launcher  
-- **GNU Stow** – Simplified dotfile management and replication across systems  
 
 ## 📂 Installation  
 
