@@ -36,3 +36,5 @@ eval "$(zoxide init bash)"
 export QT_QPA_PLATFORM=xcb
 
 export EDITOR=nvim
+
+
