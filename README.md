@@ -15,6 +15,7 @@ This repository contains my **dotfiles** for configuring the **Hyprland Window M
 This repository provides configuration files for the following software:
 
 - **Hyprland** – A dynamic tiling Wayland compositor
+  ![Alt text]()
 - **Waybar** – A highly customizable status bar
 - **Kitty** – A fast, GPU-based terminal emulator
 - **Neovim** – A lightweight, extensible text editor
@@ -50,9 +51,12 @@ stow hyprland waybar rofi nvim kitty
 
 This will correctly symlink the dotfiles into your ~/.config directory.
 
-## Auto Setup 
+## Auto Setup
+
 ### 📌 Prerequisites
+
 Make sure you have:
+
 - **Arch Linux** installed
 - **Hyprland** set up
 - **GNU Stow** installed (`pacman -S stow`)
@@ -60,11 +64,13 @@ Make sure you have:
 ### 🔧 Installation
 
 Clone the repository and run the setup script:
+
 ```bash
 git clone https://github.com/Srindot/MeeDot-.-Files.git
 cd YOUR_REPO
 chmod +x setup.sh
 ./setup.sh
 ```
+
 🔧 Customization
 Feel free to modify any config files in hyprland-dotfiles/ to match your workflow.
