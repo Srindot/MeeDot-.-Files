@@ -15,7 +15,7 @@ This repository contains my **dotfiles** for configuring the **Hyprland Window M
 This repository provides configuration files for the following software:
 
 - **Hyprland** – A dynamic tiling Wayland compositor
-  ![Alt text]()
+  ![Alt text](images/window_tile_hyprland.png)
 - **Waybar** – A highly customizable status bar
 - **Kitty** – A fast, GPU-based terminal emulator
 - **Neovim** – A lightweight, extensible text editor
