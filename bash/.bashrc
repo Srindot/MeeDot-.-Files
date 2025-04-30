@@ -24,7 +24,6 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-# Command for engaging x11 display for docker 
 export ELECTRON_ENABLE_WAYLAND=1
 export OZONE_PLATFORM=wayland
 
@@ -33,7 +32,8 @@ eval "$(zoxide init bash)"
 
 
 # Setting QT application to run on x11 or xwayland:
-export QT_QPA_PLATFORM=xcb
+#export QT_QPA_PLATFORM=xcb
+export QT_QPA_PLATFORM=wayland
 
 export EDITOR=nvim
 
