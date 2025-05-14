@@ -14,3 +14,9 @@ kdeconnect-indicator
 rog-control-center
 brightnessctl
 wtype
+easyeffects
+zita-convolver
+qpwgraph
+spotify-launcher
+bluetoothctl
+blueman
