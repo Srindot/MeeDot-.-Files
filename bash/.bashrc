@@ -11,14 +11,14 @@ PS1='[\u@\h \W]\$ '
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/stimp/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$('/home/stimpy/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/home/stimp/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/stimp/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "/home/stimpy/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/stimpy/anaconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/home/stimp/miniconda3/bin:$PATH"
+        export PATH="/home/stimpy/anaconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -32,9 +32,13 @@ eval "$(zoxide init bash)"
 
 
 # Setting QT application to run on x11 or xwayland:
-#export QT_QPA_PLATFORM=xcb
-export QT_QPA_PLATFORM=wayland
-
-export EDITOR=nvim
+export QT_QPA_PLATFORM=xcb
+#export QT_QPA_PLATFORM=wayland
 
 
+# Setting alias for Obsidian 
+alias obsidian='obsidian --disable-gpu'
+
+# Setting the default sudoeditor as nvim 
+export SUDO_EDITOR="nvim"
+#export EDITOR=nvim
