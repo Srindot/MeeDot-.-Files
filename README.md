@@ -72,5 +72,3 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-🔧 Customization
-Feel free to modify any config files in hyprland-dotfiles/ to match your workflow.
