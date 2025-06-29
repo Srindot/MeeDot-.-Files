@@ -1,12 +1,12 @@
 * {
-    /* `otf-font-awesome` is required to be installed for icons */
     font-family: FontAwesome, Roboto, Helvetica, Arial, sans-serif;
     font-size: 15px;
+    color: #E8D8CA; /* Global text color */
 }
 
 window#waybar {
-    background-color: transparent; /* No background */
-    color: #111a3d; /* Light grey text color */
+    background-color: transparent; /* Fully transparent background */
+    color: #E8D8CA; /* Text color */
     transition-property: background-color;
     transition-duration: .5s;
 }
@@ -19,11 +19,17 @@ button {
     box-shadow: inset 0 -3px transparent;
     border: none;
     border-radius: 0.6;
+    color: #E8D8CA; /* Button text color */
 }
 
 button:hover {
     background: inherit;
-    box-shadow: inset 0 -3px #111a3d; /* Light grey text color */
+    box-shadow: inset 0 -3px #cba6f7; /* Catppuccin mauve accent */
+    color: #E8D8CA;
+}
+
+label {
+    color: #E8D8CA; /* Label text color */
 }
 
 #workspaces button,
@@ -47,9 +53,9 @@ button:hover {
 #scratchpad,
 #power-profiles-daemon,
 #mpd {
-    background-color: rgba(0, 0, 0, 0.3); /* Increased transparency */
-    color: #111a3d; /* Light grey text color */
-    min-width: 75px; /* Reduced minimum width */
+    background-color: rgba(49, 50, 68, 0.7); /* Catppuccin Mocha surface0, 70% opacity */
+    color: #E8D8CA;
+    min-width: 75px;
 }
 
 #window,
@@ -65,7 +71,6 @@ button:hover {
     margin-right: 0;
 }
 
-/* Remove specific background colors for individual modules */
 #cpu,
 #memory,
 #disk,
@@ -80,6 +85,6 @@ button:hover {
 #mpd,
 #battery,
 #clock {
-    background-color: rgba(0, 0, 0, 0.3); /* Increased transparency */
-    color: #111a3d; /* Light grey text color */
+    background-color: rgba(49, 50, 68, 0.7); /* Catppuccin Mocha surface0, 70% opacity */
+    color: #E8D8CA;
 }
