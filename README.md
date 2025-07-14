@@ -8,25 +8,12 @@ This repository contains **dotfiles** for configuring the **Hyprland Window Mana
 ## 📦 Packages
 
 This repository contains dot files for the following software:
-
-<<<<<<< HEAD
 - **Hyprland** – Wayland compositor
 - **Waybar** – status bar
 - **Kitty** – terminal 
 - **Neovim** – text editor
 - **Rofi** – application launcher
 - **Shell (`bashrc')** – shell config
-=======
-This repository provides configuration files for the following software:
-
-- **Hyprland** – A dynamic tiling Wayland compositor
-- **Waybar** – A highly customizable status bar
-- **Kitty** – A fast, GPU-based terminal emulator
-- **Neovim** – A lightweight, extensible text editor
-- **Rofi** – An application launcher, window switcher, and dmenu replacement
-- **GNU Stow** – A symlink manager for organizing dotfiles
-- **Shell Configuration (`bashrc`, `zshrc`)** – Custom shell settings and aliases
->>>>>>> fe6b38b (updates in readme)
 
 ## 📂 Installation
 
