@@ -1,27 +1,20 @@
-# Hyprland Dot Files
+# Dot Files for Hyprland Arch Experience
 
-This repository contains my **dotfiles** for configuring the **Hyprland Window Manager** on an **Arch Linux** system. It includes essential configuration files for a **personalized and streamlined** desktop experience.
+This repository contains **dotfiles** for configuring the **Hyprland Window Manager** on an **Arch Linux** system.
 
-## 🚀 Features
+## Preview 
+![Alt text](images/window_tile_hyprland.png)
 
-- **Hyprland WM** – Optimized tiling and workspace management
-- **Waybar** – Customized status bar with system monitoring
-- **Kitty & Neovim** – Performance-focused terminal and text editor setup
-- **Rofi** – Aesthetic and efficient application launcher
-- **GNU Stow** – Simplified dotfile management and replication across systems
+## 📦 Packages
 
-## 📦 Included Software Packages
+This repository contains dot files for the following software:
 
-This repository provides configuration files for the following software:
-
-- **Hyprland** – A dynamic tiling Wayland compositor
-  ![Alt text](images/window_tile_hyprland.png)
-- **Waybar** – A highly customizable status bar
-- **Kitty** – A fast, GPU-based terminal emulator
-- **Neovim** – A lightweight, extensible text editor
-- **Rofi** – An application launcher, window switcher, and dmenu replacement
-- **GNU Stow** – A symlink manager for organizing dotfiles
-- **Shell Configuration (`bashrc`, `zshrc`)** – Custom shell settings and aliases
+- **Hyprland** – Wayland compositor
+- **Waybar** – status bar
+- **Kitty** – terminal 
+- **Neovim** – text editor
+- **Rofi** – application launcher
+- **Shell (`bashrc')** – shell config
 
 ## 📂 Installation
 
