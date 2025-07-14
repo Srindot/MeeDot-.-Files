@@ -3,7 +3,7 @@
 This repository contains **dotfiles** for configuring the **Hyprland Window Manager** on an **Arch Linux** system.
 
 ## Preview 
-![Alt text](images/window_tile_hyprland.png)
+![Alt text](images/catppuccin_window_tile.png)
 
 ## 📦 Packages
 
@@ -20,7 +20,6 @@ This repository contains dot files for the following software:
 This repository provides configuration files for the following software:
 
 - **Hyprland** – A dynamic tiling Wayland compositor
-  ![Alt text](images/catppuccin_window_tile.png)
 - **Waybar** – A highly customizable status bar
 - **Kitty** – A fast, GPU-based terminal emulator
 - **Neovim** – A lightweight, extensible text editor
