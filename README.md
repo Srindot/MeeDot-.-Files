@@ -13,7 +13,7 @@ This repository contains dot files for the following software:
 - **Kitty** – terminal 
 - **Neovim** – text editor
 - **Rofi** – application launcher
-- **Shell (`bashrc')** – shell config
+- **Shell (`bashrc`)** – shell config
 
 ## 📂 Installation
 
