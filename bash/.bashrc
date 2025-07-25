@@ -35,7 +35,6 @@ eval "$(zoxide init bash)"
 export QT_QPA_PLATFORM=xcb
 #export QT_QPA_PLATFORM=wayland
 
-
 # Setting alias for Obsidian 
 alias obsidian='obsidian --disable-gpu'
 
