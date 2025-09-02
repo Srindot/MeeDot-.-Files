@@ -3,7 +3,7 @@
 This repository contains **dotfiles** for configuring the **Hyprland Window Manager** on an **Arch Linux** system.
 
 ## Preview 
-![Alt text](images/image.png)
+![Alt text](images/latest.png)
 
 ## 📦 Packages
 
