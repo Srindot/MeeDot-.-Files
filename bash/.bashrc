@@ -41,3 +41,6 @@ alias obsidian='obsidian --disable-gpu'
 # Setting the default sudoeditor as nvim 
 export SUDO_EDITOR="nvim"
 #export EDITOR=nvim
+
+# Starship
+eval "$(starship init bash)"
