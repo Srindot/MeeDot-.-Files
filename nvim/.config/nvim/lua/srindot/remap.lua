@@ -55,3 +55,5 @@ vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
 end)
 
+-- Clear highlights when pressing Esc in normal mode
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')

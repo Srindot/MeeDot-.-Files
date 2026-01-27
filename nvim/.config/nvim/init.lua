@@ -1,10 +1,20 @@
 require("srindot")
--- Copy selected text to system clipboard using wl-copy
-vim.keymap.set("v", "<leader>y", ":w !wl-copy<CR><CR>", { silent = true })
 
--- Copy entire file to clipboard
-vim.keymap.set("n", "<leader>Y", ":%w !wl-copy<CR><CR>", { silent = true })
+-- Set the clipboard to use the system clipboard (unnamedplus)
+vim.opt.clipboard = "unnamedplus"
 
--- Paste from clipboard into insert mode
-vim.keymap.set("n", "<leader>p", ":r !wl-paste<CR>", { silent = true })
-
+-- Define the clipboard provider specifically for WSL
+if vim.fn.has("wsl") == 1 then
+    vim.g.clipboard = {
+        name = "win32yank-wsl",
+        copy = {
+            ["+"] = "win32yank.exe -i --crlf",
+            ["*"] = "win32yank.exe -i --crlf",
+        },
+        paste = {
+            ["+"] = "win32yank.exe -o --lf",
+            ["*"] = "win32yank.exe -o --lf",
+        },
+        cache_enabled = 0,
+    }
+end
