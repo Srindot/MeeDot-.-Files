@@ -3,30 +3,18 @@
 SetWinDelay(-1) 
 UserProfile := EnvGet("USERPROFILE")
 
-; ---------------------------------------------------------
-; 1. CONFIGURATION FUNCTION (Fast Apply)
-; ---------------------------------------------------------
 ApplyKomorebiConfig() {
     try {
-        ; --- BEHAVIOR ---
         Run("komorebic.exe focus-follows-mouse enable", , "Hide")
         Run("komorebic.exe mouse-follows-focus enable", , "Hide")
-
-        ; --- IGNORE RULES ---
         Run("komorebic.exe manage-rule exe 'ScreenClippingHost.exe' ignore", , "Hide")
         Run("komorebic.exe float-rule exe 'SnippingTool.exe'", , "Hide")
         Run("komorebic.exe manage-rule class 'Shell_TrayWnd' ignore", , "Hide")
-
-        ; --- VISUALS ---
         Run("komorebic.exe border enable", , "Hide")
         Run("komorebic.exe border-width 5", , "Hide") 
         Run("komorebic.exe border-style rounded", , "Hide") 
-        
-        ; Gapping
         Run("komorebic.exe container-padding 10", , "Hide")
         Run("komorebic.exe workspace-padding 10", , "Hide")
-
-        ; --- COLORS ---
         Run("komorebic.exe border-colour 235 160 172 --window-kind single", , "Hide")
         Run("komorebic.exe border-colour 235 160 172 --window-kind stack", , "Hide")
         Run("komorebic.exe border-colour 235 160 172 --window-kind floating", , "Hide")
@@ -35,9 +23,6 @@ ApplyKomorebiConfig() {
     }
 }
 
-; ---------------------------------------------------------
-; 2. SMART PROCESS MANAGER
-; ---------------------------------------------------------
 Komorebic(cmd) {
     Run("komorebic.exe " . cmd, , "Hide")
 }
@@ -61,17 +46,9 @@ ManageKomorebiState(action) {
     }
 }
 
-; ---------------------------------------------------------
-; 3. INITIAL STARTUP (REMOVED)
-; ---------------------------------------------------------
-; I have removed the auto-start commands. 
-; The script will now wait for you to press Win+P.
 ToolTip("AHK Ready - Press Win+P to start Komorebi")
 SetTimer () => ToolTip(), -3000
 
-; ---------------------------------------------------------
-; 4. WIN+P: TOGGLE KOMOREBI ON/OFF
-; ---------------------------------------------------------
 #p:: {
     if ProcessExist("komorebi.exe") {
         ManageKomorebiState("stop")
@@ -84,17 +61,11 @@ SetTimer () => ToolTip(), -3000
     }
 }
 
-; ---------------------------------------------------------
-; VIM ARROWS
-; ---------------------------------------------------------
 !+h::Send "{Left}"
 !+j::Send "{Down}"
 !+k::Send "{Up}"
 !+l::Send "{Right}"
 
-; ---------------------------------------------------------
-; SCREENSHOT INTERCEPTOR
-; ---------------------------------------------------------
 ~#+s:: {
     Komorebic("toggle-tiling")
     if KeyWait("LButton", "D T8") {
@@ -104,9 +75,6 @@ SetTimer () => ToolTip(), -3000
     Komorebic("toggle-tiling")
 }
 
-; ---------------------------------------------------------
-; WORKSPACES & NAVIGATION
-; ---------------------------------------------------------
 #1::Komorebic("focus-workspace 0")
 #2::Komorebic("focus-workspace 1")
 #3::Komorebic("focus-workspace 2")
@@ -119,13 +87,21 @@ SetTimer () => ToolTip(), -3000
 #+4::Komorebic("move-to-workspace 3")
 #+5::Komorebic("move-to-workspace 4")
 
-#f::Komorebic("toggle-monocle")
+#f:: {
+    if ProcessExist("komorebi.exe") {
+        Komorebic("toggle-monocle")
+    } else {
+        WinGetPos(&X, &Y, &W, &H, "A")
+        if (WinGetMinMax("A") = 1)
+            WinRestore("A")
+        else
+            WinMaximize("A")
+    }
+}
+
 #+r::Komorebic("retile")
 #q::WinClose("A")
 
-; ---------------------------------------------------------
-; APP LAUNCHERS
-; ---------------------------------------------------------
 #e::Run("powershell.exe -NoExit -Command yazi", UserProfile)
 #+e::Run("explorer.exe", UserProfile)
 #b:: Run("vivaldi.exe")
@@ -141,9 +117,6 @@ SetTimer () => ToolTip(), -3000
     }
 }
 
-; ---------------------------------------------------------
-; WINDOW MOVING
-; ---------------------------------------------------------
 #u::Komorebic("focus up")    
 #h::Komorebic("focus down")  
 #j::Komorebic("focus left")  
@@ -154,31 +127,51 @@ SetTimer () => ToolTip(), -3000
 #+j::Komorebic("move left")  
 #+k::Komorebic("move right") 
 
-; ---------------------------------------------------------
-; SMOOTH MOUSE
-; ---------------------------------------------------------
 #LButton:: {
-    MouseGetPos(&startX, &startY)
-    Threshold := 80 
-    Cooldown  := 250
-    
-    while GetKeyState("LButton", "P") {
-        MouseGetPos(&curX, &curY)
-        diffX := curX - startX
-        diffY := curY - startY
-        
-        if (Abs(diffX) > Threshold) {
-            (diffX > 0) ? Komorebic("move right") : Komorebic("move left")
-            Sleep(Cooldown) 
-            MouseGetPos(&startX, &startY) 
+    if ProcessExist("komorebi.exe") {
+        MouseGetPos(&startX, &startY)
+        Threshold := 80 
+        Cooldown  := 250
+        while GetKeyState("LButton", "P") {
+            MouseGetPos(&curX, &curY)
+            diffX := curX - startX
+            diffY := curY - startY
+            if (Abs(diffX) > Threshold) {
+                (diffX > 0) ? Komorebic("move right") : Komorebic("move left")
+                Sleep(Cooldown) 
+                MouseGetPos(&startX, &startY) 
+            }
+            if (Abs(diffY) > Threshold) {
+                (diffY > 0) ? Komorebic("move down") : Komorebic("move up")
+                Sleep(Cooldown)
+                MouseGetPos(&startX, &startY)
+            }
+            Sleep(10)
         }
+    } else {
+        CoordMode "Mouse", "Screen"
+        MouseGetPos(&startX, &startY, &targetWin)
+        if (WinGetClass(targetWin) == "Shell_TrayWnd" || WinGetClass(targetWin) == "WorkerW")
+            return
+        WinGetPos(&winX, &winY, ,, targetWin)
+        while GetKeyState("LButton", "P") {
+            MouseGetPos(&mouseX, &mouseY)
+            WinMove(winX + (mouseX - startX), winY + (mouseY - startY),,, targetWin)
+        }
+    }
+}
 
-        if (Abs(diffY) > Threshold) {
-            (diffY > 0) ? Komorebic("move down") : Komorebic("move up")
-            Sleep(Cooldown)
-            MouseGetPos(&startX, &startY)
+#RButton:: {
+    if !ProcessExist("komorebi.exe") {
+        CoordMode "Mouse", "Screen"
+        MouseGetPos(&startX, &startY, &targetWin)
+        if (WinGetClass(targetWin) == "Shell_TrayWnd" || WinGetClass(targetWin) == "WorkerW")
+            return
+        WinGetPos(&winX, &winY, &winW, &winH, targetWin)
+        while GetKeyState("RButton", "P") {
+            MouseGetPos(&mouseX, &mouseY)
+            WinMove(,, winW + (mouseX - startX), winH + (mouseY - startY), targetWin)
         }
-        Sleep(10)
     }
 }
 
