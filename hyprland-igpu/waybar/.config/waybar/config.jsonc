@@ -1,0 +1,156 @@
+// -*- mode: jsonc -*-
+{
+    "layer": "top", 
+    "position": "top", 
+    "height": 40, 
+    "margin": 0,
+    "spacing": 0,
+
+    "modules-left": [   
+        "hyprland/workspaces",
+        "hyprland/window"
+    ],
+
+    // Centre = data and time
+    "modules-center": [
+        "clock",
+        "custom/media-player"
+    ],
+
+    "modules-right": [
+        "pulseaudio",
+        "cpu",
+        "memory",        // <--- Added Memory Module Here
+        "temperature",   // <--- Added Temperature Module Here
+        "battery",
+        "backlight",
+        "custom/MediaControl",
+        "tray"
+    ],
+    
+    "hyprland/workspaces": {
+        "disable-scroll": false,
+        "all-outputs": true,
+        "warp-on-scroll": true,
+        "format": "{name}: {icon}",
+        "format-icons": {
+            "1" : "🖵",
+            "2" : "🖵",
+            "3" : "🖵",
+            "4" : "🖵",
+            "5" : "🖵",
+            "urgent": "",
+            "focused": "",
+            "default": ""
+        }
+    },
+
+    // Right Module Configuration
+    "tray": {
+        // "icon-size": 21,
+        "spacing": 20
+    },
+
+    "clock": {
+            // "timezone": "India/Kolkata",
+            "format": "{:%H:%M %A, %d %B}",
+            "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+            "interval": 1,
+            "on-click": "/opt/vivaldi/vivaldi --profile-directory=Default --app-id=kjbdgfilnfhdoflbpgamdcdgpehopbep"
+        },
+
+    "cpu": {
+        "format": "{usage}% ",
+        "tooltip": false
+    },
+
+    // Memory Module Configuration
+    "memory": {
+        "format": "{used}G/{total}G ", // Displays used GIB and total GIB with an icon
+        // "format": "{percentage}% ", // Alternatively, display as a percentage
+        "tooltip": true, // Show a tooltip on hover
+        "interval": 5, // Update every 5 seconds
+        "states": {
+            "warning": 80, // Text color changes if usage exceeds 80%
+            "critical": 90 // Text color changes if usage exceeds 90%
+        },
+        "format-icons": ["ori", "mori", "hori"] // Example icons for different states (requires a font like Nerd Font)
+    },
+
+    // Temperature Module Configuration
+    "temperature": {
+        // You might need to find the correct thermal zone or hwmon path for your system.
+        // Common thermal zones are 0 or 1. You can check them by
+        // `ls /sys/class/thermal/thermal_zone*/temp` or `ls /sys/class/hwmon/hwmon*/temp*_input`
+        // If one path works, you can use it directly. If not, you can provide an array.
+        // "thermal-zone": 0, // Most common default, try 0 or 1.
+        "hwmon-path": ["/sys/class/hwmon/hwmon1/temp1_input", "/sys/class/hwmon/hwmon0/temp1_input"], // Example for hwmon path
+        "critical-threshold": 85, // Temperature at which text becomes critical
+        "format": "{temperatureC}°C {icon}",
+        "format-warning": "{temperatureC}°C ", // Icon for warning
+        "format-critical": "{temperatureC}°C ℃", // Icon for critical
+        "format-icons": ["", "", ""], // Icons for normal, warning, critical (low to high)
+        "tooltip": true,
+        "interval": 5 // Update every 5 seconds
+    },
+    
+    "backlight": {
+        "device": "brightnessctl", 
+        "format": "{percent}% {icon}",
+        "format-icons": ["", "", "", "", "", "", "", "", ""],
+        "scroll-step": 1
+    },
+
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        
+        "format": "{capacity}% {icon}",
+        "format-full": "{capacity}% {icon}",
+        "format-charging": "{capacity}% ",
+        "format-plugged": "{capacity}% ",
+        "format-alt": "{time} {icon}",
+        "format-icons": ["⚡︎", "⚡︎", "⚡︎", "⚡︎", "⚡︎"]
+    },
+
+    "pulseaudio": {
+        "format": "{volume}% {icon} {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    },
+
+    // CUSTOM MEDIA PLAYER MODULE
+    "custom/media-player": {
+        "format": "{} {icon}",
+        "interval": 2, // Update every 2 seconds
+        "exec-if": "pgrep -x mpd", // Only show if MPD is running
+        "return-type": "json",
+        "script": "~/.config/eww/bar/scripts/waybar_music_status.sh", // Call the new script directly
+        "format-icons": {
+            "": "", // Playing icon (from your script)
+            "奈": "",  // Paused icon (from your script, mapped to a common pause symbol)
+            "default": "" // Default/Stopped icon
+        },
+        "on-click": "$HOME/.config/eww/bar/scripts/toggle_music_eww.sh",
+        "on-click-right": "mpc toggle",
+        "on-scroll-up": "mpc next",
+        "on-scroll-down": "mpc prev",
+        "tooltip": true,
+        "tooltip-format": "{tooltip}"
+    }
+}
