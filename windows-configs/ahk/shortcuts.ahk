@@ -1,18 +1,25 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
-SetWinDelay(-1) 
+SetWinDelay(-1)
+CoordMode "Mouse", "Screen"
+
 UserProfile := EnvGet("USERPROFILE")
 
-; ---------------------------------------------------------
-; 1. CONFIGURATION FUNCTION (Fast Apply)
-; ---------------------------------------------------------
+; ==============================================================================
+; 1. CORE FUNCTIONS (Toggle & Config)
+; ==============================================================================
+
 ApplyKomorebiConfig() {
     try {
         ; --- BEHAVIOR ---
-        Run("komorebic.exe focus-follows-mouse enable", , "Hide")
+        ; Disabling focus-follows-mouse to prevent menus from closing when hovering out
+        Run("komorebic.exe focus-follows-mouse disable", , "Hide")
         Run("komorebic.exe mouse-follows-focus enable", , "Hide")
 
         ; --- IGNORE RULES ---
+        Run("komorebic.exe manage-rule class '#32768' ignore", , "Hide") ; Standard Windows Menus
+        Run("komorebic.exe manage-rule class 'Windows.UI.Core.CoreWindow' ignore", , "Hide") ; UWP Popups
+        Run("komorebic.exe manage-rule class 'Chrome_RenderWidgetHostHWND' ignore", , "Hide") ; Chrome/Electron Popups
         Run("komorebic.exe manage-rule exe 'ScreenClippingHost.exe' ignore", , "Hide")
         Run("komorebic.exe float-rule exe 'SnippingTool.exe'", , "Hide")
         Run("komorebic.exe manage-rule class 'Shell_TrayWnd' ignore", , "Hide")
@@ -21,8 +28,6 @@ ApplyKomorebiConfig() {
         Run("komorebic.exe border enable", , "Hide")
         Run("komorebic.exe border-width 5", , "Hide") 
         Run("komorebic.exe border-style rounded", , "Hide") 
-        
-        ; Gapping
         Run("komorebic.exe container-padding 10", , "Hide")
         Run("komorebic.exe workspace-padding 10", , "Hide")
 
@@ -35,20 +40,19 @@ ApplyKomorebiConfig() {
     }
 }
 
-; ---------------------------------------------------------
-; 2. SMART PROCESS MANAGER
-; ---------------------------------------------------------
 Komorebic(cmd) {
-    Run("komorebic.exe " . cmd, , "Hide")
+    ; Helper to run komorebic commands silently
+    try {
+        Run("komorebic.exe " . cmd, , "Hide")
+    }
 }
 
 ManageKomorebiState(action) {
     if (action = "stop") {
         if ProcessExist("komorebi.exe") {
             RunWait("komorebic.exe stop", , "Hide")
-            if ProcessExist("komorebi.exe") {
+            if ProcessExist("komorebi.exe")
                 ProcessClose("komorebi.exe")
-            }
         }
     } 
     else if (action = "start") {
@@ -61,52 +65,205 @@ ManageKomorebiState(action) {
     }
 }
 
-; ---------------------------------------------------------
-; 3. INITIAL STARTUP (REMOVED)
-; ---------------------------------------------------------
-; I have removed the auto-start commands. 
-; The script will now wait for you to press Win+P.
-ToolTip("AHK Ready - Press Win+P to start Komorebi")
-SetTimer () => ToolTip(), -3000
+; ==============================================================================
+; 2. GLOBAL SYSTEM HOTKEYS (Always Active)
+; ==============================================================================
 
-; ---------------------------------------------------------
-; 4. WIN+P: TOGGLE KOMOREBI ON/OFF
-; ---------------------------------------------------------
+; Auto-Apply Config on Script Reload (if Komorebi is already running)
+if ProcessExist("komorebi.exe")
+    ApplyKomorebiConfig()
+
+; Toggle Komorebi (Win + P)
 #p:: {
     if ProcessExist("komorebi.exe") {
         ManageKomorebiState("stop")
-        ToolTip("Komorebi Stopped")
-        SetTimer () => ToolTip(), -1500
+        ToolTip("Komorebi OFF - Native Mode")
     } else {
         ManageKomorebiState("start")
-        ToolTip("Komorebi Started")
-        SetTimer () => ToolTip(), -1500
+        ToolTip("Komorebi ON - Tiling Mode")
+    }
+    SetTimer () => ToolTip(), -1500
+}
+
+; Close Window (Win + Q)
+#q::WinClose("A")
+
+; App Launchers (Win + E, B, N, C, T)
+#e::Run("powershell.exe -NoExit -Command yazi", UserProfile)
+#+e::Run("explorer.exe", UserProfile)
+#b::Run("vivaldi.exe")
+#n::Run(UserProfile . "\AppData\Local\Programs\Obsidian\Obsidian.exe")
+#c::Run("powershell.exe", UserProfile)
+#+t:: {
+    btopPath := UserProfile . "\AppData\Local\Microsoft\WinGet\Packages\aristocratos.btop4win_Microsoft.WinGet.Source_8wekyb3d8bbwe\btop4win\btop4win.exe"
+    if FileExist(btopPath)
+        Run('powershell.exe -Command "' . btopPath . '"', UserProfile)
+    else
+        Run('powershell.exe -Command "btop4win"', UserProfile)
+}
+
+; ==============================================================================
+; 3. DUAL-MODE HOTKEYS (Behavior changes based on state)
+; ==============================================================================
+
+; Win + F (Toggle Monocle vs Maximize)
+#f:: {
+    if ProcessExist("komorebi.exe") {
+        ; ON: Toggle Tiling Monocle
+        Komorebic("toggle-monocle")
+    } else {
+        ; OFF: Native Windows Maximize
+        if (WinGetMinMax("A") = 1)
+            WinRestore("A")
+        else
+            WinMaximize("A")
     }
 }
 
-; ---------------------------------------------------------
-; VIM ARROWS
-; ---------------------------------------------------------
+; Win + G (Minimize Active Window)
+#w:: {
+    if ProcessExist("komorebi.exe") {
+        ; ON: Tell Komorebi to minimize (removes from tile grid)
+        Komorebic("minimize")
+    } else {
+        ; OFF: Standard Windows Minimize
+        WinMinimize("A")
+    }
+}
+
+; Win + Left Click (Swap Tile vs Move Window)
+#LButton:: {
+    MouseGetPos(&startX, &startY, &targetWin)
+
+    ; Safety: Ignore Desktop/Taskbar
+    try {
+        class := WinGetClass(targetWin)
+        if (class == "Shell_TrayWnd" || class == "WorkerW")
+            return
+    }
+
+    ; --- STATE: KOMOREBI ON (Swap Tiles) ---
+    if ProcessExist("komorebi.exe") {
+        Threshold := 80 
+        Cooldown := 250
+        while GetKeyState("LButton", "P") {
+            MouseGetPos(&curX, &curY)
+            diffX := curX - startX
+            diffY := curY - startY
+
+            if (Abs(diffX) > Threshold) {
+                (diffX > 0) ? Komorebic("move right") : Komorebic("move left")
+                Sleep(Cooldown) 
+                MouseGetPos(&startX, &startY) 
+            }
+            if (Abs(diffY) > Threshold) {
+                (diffY > 0) ? Komorebic("move down") : Komorebic("move up")
+                Sleep(Cooldown)
+                MouseGetPos(&startX, &startY)
+            }
+            Sleep(10)
+        }
+        return
+    }
+
+    ; --- STATE: KOMOREBI OFF (Standard Move) ---
+    ; Calculate offset so window sticks to mouse properly
+    WinGetPos(&winX, &winY,,, targetWin)
+    offsetX := startX - winX
+    offsetY := startY - winY
+
+    ; If maximized, restore it first so we can move it
+    if (WinGetMinMax(targetWin) = 1)
+        WinRestore(targetWin)
+
+    while GetKeyState("LButton", "P") {
+        MouseGetPos(&curX, &curY)
+        WinMove(curX - offsetX, curY - offsetY,,, targetWin)
+        Sleep(10)
+    }
+}
+
+; Win + Right Click (Native Resize ONLY when OFF)
+#RButton:: {
+    ; If Komorebi is ON, we disable scaling completely (Return immediately)
+    if ProcessExist("komorebi.exe")
+        return 
+
+    MouseGetPos(&startX, &startY, &targetWin)
+
+    ; Safety Check
+    try {
+        class := WinGetClass(targetWin)
+        if (class == "Shell_TrayWnd" || class == "WorkerW")
+            return
+        WinGetPos(&winX, &winY, &winW, &winH, targetWin)
+    } catch {
+        return
+    }
+
+    ; --- STATE: KOMOREBI OFF (HYPRLAND NATIVE RESIZE) ---
+    ; Determine Quadrants
+    CenterX := winX + (winW / 2)
+    CenterY := winY + (winH / 2)
+    ResizeLeft := (startX < CenterX)
+    ResizeTop := (startY < CenterY)
+
+    OrigX := winX, OrigY := winY, OrigW := winW, OrigH := winH
+
+    while GetKeyState("RButton", "P") {
+        MouseGetPos(&curX, &curY)
+        dx := curX - startX
+        dy := curY - startY
+
+        NewX := OrigX, NewY := OrigY, NewW := OrigW, NewH := OrigH
+
+        ; Horizontal Logic
+        if (ResizeLeft) {
+            NewX := OrigX + dx
+            NewW := OrigW - dx
+        } else {
+            NewW := OrigW + dx
+        }
+
+        ; Vertical Logic
+        if (ResizeTop) {
+            NewY := OrigY + dy
+            NewH := OrigH - dy
+        } else {
+            NewH := OrigH + dy
+        }
+
+        ; Apply if size is safe (>50px)
+        if (NewW > 50 && NewH > 50)
+            WinMove(NewX, NewY, NewW, NewH, targetWin)
+
+        Sleep(10)
+    }
+}
+
+; ==============================================================================
+; 4. KOMOREBI SPECIFIC HOTKEYS (Passthrough)
+; ==============================================================================
+
+#u::Komorebic("focus up") 
+#h::Komorebic("focus down") 
+#j::Komorebic("focus left") 
+#k::Komorebic("focus right") 
+
+#+u::Komorebic("move up") 
+#+h::Komorebic("move down") 
+#+j::Komorebic("move left") 
+#+k::Komorebic("move right") 
+
+#+r::Komorebic("retile")
+
+; Vim Arrows
 !+h::Send "{Left}"
 !+j::Send "{Down}"
 !+k::Send "{Up}"
 !+l::Send "{Right}"
 
-; ---------------------------------------------------------
-; SCREENSHOT INTERCEPTOR
-; ---------------------------------------------------------
-~#+s:: {
-    Komorebic("toggle-tiling")
-    if KeyWait("LButton", "D T8") {
-        KeyWait("LButton")
-    }
-    Sleep(500)
-    Komorebic("toggle-tiling")
-}
-
-; ---------------------------------------------------------
-; WORKSPACES & NAVIGATION
-; ---------------------------------------------------------
+; Workspaces
 #1::Komorebic("focus-workspace 0")
 #2::Komorebic("focus-workspace 1")
 #3::Komorebic("focus-workspace 2")
@@ -127,69 +284,19 @@ SetTimer () => ToolTip(), -3000
 #+8::Komorebic("move-to-workspace 7")
 #+9::Komorebic("move-to-workspace 8")
 
-#f::Komorebic("toggle-monocle")
-#+r::Komorebic("retile")
-#q::WinClose("A")
-
-; ---------------------------------------------------------
-; APP LAUNCHERS
-; ---------------------------------------------------------
-#e::Run("powershell.exe -NoExit -Command yazi", UserProfile)
-#+e::Run("explorer.exe", UserProfile)
-#b:: Run("vivaldi.exe")
-#n:: Run(UserProfile . "\AppData\Local\Programs\Obsidian\Obsidian.exe")
-#c:: Run("powershell.exe", UserProfile)
-
-#+t:: {
-    btopPath := UserProfile . "\AppData\Local\Microsoft\WinGet\Packages\aristocratos.btop4win_Microsoft.WinGet.Source_8wekyb3d8bbwe\btop4win\btop4win.exe"
-    if FileExist(btopPath) {
-        Run('powershell.exe -Command "' . btopPath . '"', UserProfile)
-    } else {
-        Run('powershell.exe -Command "btop4win"', UserProfile)
+; Screenshot Tool
+~#+s:: {
+    if ProcessExist("komorebi.exe") {
+        Komorebic("toggle-tiling")
+        if KeyWait("LButton", "D T8") {
+            KeyWait("LButton")
+        }
+        Sleep(500)
+        Komorebic("toggle-tiling")
     }
 }
 
-; ---------------------------------------------------------
-; WINDOW MOVING
-; ---------------------------------------------------------
-#u::Komorebic("focus up")    
-#h::Komorebic("focus down")  
-#j::Komorebic("focus left")  
-#k::Komorebic("focus right") 
-
-#+u::Komorebic("move up")    
-#+h::Komorebic("move down")  
-#+j::Komorebic("move left")  
-#+k::Komorebic("move right") 
-
-; ---------------------------------------------------------
-; SMOOTH MOUSE
-; ---------------------------------------------------------
-#LButton:: {
-    MouseGetPos(&startX, &startY)
-    Threshold := 80 
-    Cooldown  := 250
-    
-    while GetKeyState("LButton", "P") {
-        MouseGetPos(&curX, &curY)
-        diffX := curX - startX
-        diffY := curY - startY
-        
-        if (Abs(diffX) > Threshold) {
-            (diffX > 0) ? Komorebic("move right") : Komorebic("move left")
-            Sleep(Cooldown) 
-            MouseGetPos(&startX, &startY) 
-        }
-
-        if (Abs(diffY) > Threshold) {
-            (diffY > 0) ? Komorebic("move down") : Komorebic("move up")
-            Sleep(Cooldown)
-            MouseGetPos(&startX, &startY)
-        }
-        Sleep(10)
-    }
-}
-
+; System Overrides
 ~LWin::Send("{Blind}{vkE8}")
 #Tab::Send "!{Tab}"
 #Esc::Suspend(-1)
