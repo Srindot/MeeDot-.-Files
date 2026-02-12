@@ -7,63 +7,43 @@ CoordMode "Mouse", "Screen"
 ; CONFIGURATION
 ; ==============================================================================
 UserProfile := EnvGet("USERPROFILE")
-KomorebicPath := "komorebic.exe" ; Ensure this is in your PATH or provide full path
-
-; Visuals
-BorderColorFocused   := "235 160 172" ; Catppuccin Rosewater
-BorderColorUnfocused := "24 24 37"    ; Catppuccin Base
-BorderWidth          := 5
-Padding              := 10
+GlazeWMPath := "glazewm.exe" ; Ensure this is in your PATH or provide full path
 
 ; Mouse Interaction Settings
-ResizeThreshold      := 20   ; Pixels to move before a tiled resize triggers
-MoveThreshold        := 80   ; Pixels to move before a tiled move/swap triggers
-ActionCooldown       := 150  ; ms between tiled actions to prevent jitter
+ResizeThreshold := 20 ; Pixels before a tiled resize triggers
+MoveThreshold := 80 ; Pixels before a tiled move/swap triggers
+ActionCooldown := 150 ; ms between tiled actions to avoid spam
 
 ; ==============================================================================
-; KOMOREBI HELPERS
+; GLAZEWM HELPERS
 ; ==============================================================================
-Komorebic(cmd) {
+GlazeWM(cmd) {
     try {
-        Run(KomorebicPath . " " . cmd, , "Hide")
+        Run(GlazeWMPath . " command " . cmd, , "Hide")
     } catch as e {
-        ; Silent fail if komorebic isn't found/running
+        ; Silent fail if glazewm isn't found
     }
 }
 
-ApplyKomorebiConfig() {
-    Komorebic("focus-follows-mouse enable")
-    Komorebic("mouse-follows-focus enable")
-    Komorebic("manage-rule exe 'ScreenClippingHost.exe' ignore")
-    Komorebic("float-rule exe 'SnippingTool.exe'")
-    Komorebic("manage-rule class 'Shell_TrayWnd' ignore")
-    Komorebic("manage-rule class 'WorkerW' ignore")
-    
-    Komorebic("border enable")
-    Komorebic("border-width " . BorderWidth)
-    Komorebic("border-style rounded")
-    Komorebic("container-padding " . Padding)
-    Komorebic("workspace-padding " . Padding)
-    
-    Komorebic("border-colour " . BorderColorFocused . " --window-kind single")
-    Komorebic("border-colour " . BorderColorFocused . " --window-kind stack")
-    Komorebic("border-colour " . BorderColorFocused . " --window-kind floating")
-    Komorebic("border-colour " . BorderColorUnfocused . " --window-kind unfocused")
-}
-
-ManageKomorebiState(action) {
+ManageGlazeState(action) {
     if (action = "stop") {
-        if ProcessExist("komorebi.exe") {
-            Komorebic("stop")
-            if ProcessExist("komorebi.exe")
-                ProcessClose("komorebi.exe")
+        if ProcessExist("glazewm.exe") {
+            GlazeWM("wm-exit")
+            Sleep(500)
+            if ProcessExist("glazewm.exe")
+                ProcessClose("glazewm.exe")
         }
     } else if (action = "start") {
-        if !ProcessExist("komorebi.exe") {
-            Komorebic("start")
-            ProcessWait("komorebi.exe", 5)
-            Sleep(500)
-            ApplyKomorebiConfig()
+        if !ProcessExist("glazewm.exe") {
+            try {
+                Run(GlazeWMPath, , "Hide")
+                ToolTip("GlazeWM Starting...")
+                ProcessWait("glazewm.exe", 5)
+                Sleep(1000)
+                ToolTip()
+            } catch as e {
+                MsgBox("Failed to start GlazeWM: " . e.Message)
+            }
         }
     }
 }
@@ -73,66 +53,68 @@ ManageKomorebiState(action) {
 ; ==============================================================================
 
 ; --- Management ---
-ToolTip("AHK Ready - Press Win+P to start Komorebi")
+ToolTip("AHK Ready - Press Win+P to start GlazeWM")
 SetTimer () => ToolTip(), -3000
 
 #p:: {
-    if ProcessExist("komorebi.exe") {
-        ManageKomorebiState("stop")
-        ToolTip("Komorebi Stopped")
+    if ProcessExist("glazewm.exe") {
+        ManageGlazeState("stop")
+        ToolTip("GlazeWM Stopped")
     } else {
-        ManageKomorebiState("start")
-        ToolTip("Komorebi Started")
+        ManageGlazeState("start")
+        ToolTip("GlazeWM Started")
     }
     SetTimer () => ToolTip(), -1500
 }
 
 #q::WinClose("A")
-#e::Run("powershell.exe -NoExit -Command yazi", UserProfile)
-#+e::Run("explorer.exe", UserProfile)
-#b::Run("vivaldi.exe")
-#c::Run("powershell.exe", UserProfile)
-#n::Run(UserProfile . "\AppData\Local\Programs\Obsidian\Obsidian.exe")
+#e::SmartSpawn("powershell.exe -NoExit -Command yazi") ; Retains 'yazi' functionality via SmartSpawn
+#+e::SmartSpawn("explorer.exe")
+#b::SmartSpawn("vivaldi.exe")
+#c::SmartSpawn("powershell.exe")
+#Enter::SmartSpawn("wt.exe") ; Added explicit bind for Windows Terminal as requested
+#n::SmartSpawn(UserProfile . "\AppData\Local\Programs\Obsidian\Obsidian.exe")
 
 #+t:: {
     btopPath := UserProfile . "\AppData\Local\Microsoft\WinGet\Packages\aristocratos.btop4win_Microsoft.WinGet.Source_8wekyb3d8bbwe\btop4win\btop4win.exe"
     if FileExist(btopPath)
-        Run('powershell.exe -Command "' . btopPath . '"', UserProfile)
+        SmartSpawn('powershell.exe -Command "' . btopPath . '"')
     else
-        Run('powershell.exe -Command "btop4win"', UserProfile)
+        SmartSpawn('powershell.exe -Command "btop4win"')
 }
 
 ; --- Window Focus (Vim keys) ---
-#h::Komorebic("focus left")
-#j::Komorebic("focus down")
-#k::Komorebic("focus up")
-#l::Komorebic("focus right")
+#h::GlazeWM("focus --direction left")
+#j::GlazeWM("focus --direction down")
+#k::GlazeWM("focus --direction up")
+#l::GlazeWM("focus --direction right")
 
 ; --- Window Move (Vim keys) ---
-#+h::Komorebic("move left")
-#+j::Komorebic("move down")
-#+k::Komorebic("move up")
-#+l::Komorebic("move right")
+#+h::GlazeWM("move --direction left")
+#+j::GlazeWM("move --direction down")
+#+k::GlazeWM("move --direction up")
+#+l::GlazeWM("move --direction right")
 
 ; --- Workspaces ---
-#1::Komorebic("focus-workspace 0")
-#2::Komorebic("focus-workspace 1")
-#3::Komorebic("focus-workspace 2")
-#4::Komorebic("focus-workspace 3")
-#5::Komorebic("focus-workspace 4")
+; Note: GlazeWM workspaces are named strings. Assuming names "1" through "9" as per config.
+#1::GlazeWM("focus --workspace 1")
+#2::GlazeWM("focus --workspace 2")
+#3::GlazeWM("focus --workspace 3")
+#4::GlazeWM("focus --workspace 4")
+#5::GlazeWM("focus --workspace 5")
 
-#+1::Komorebic("move-to-workspace 0")
-#+2::Komorebic("move-to-workspace 1")
-#+3::Komorebic("move-to-workspace 2")
-#+4::Komorebic("move-to-workspace 3")
-#+5::Komorebic("move-to-workspace 4")
+#+1::GlazeWM("move --workspace 1")
+#+2::GlazeWM("move --workspace 2")
+#+3::GlazeWM("move --workspace 3")
+#+4::GlazeWM("move --workspace 4")
+#+5::GlazeWM("move --workspace 5")
 
 ; --- Tiling Toggles ---
 
-; CORRECTED: Handles Monocle if Komorebi is running, else Standard Maximize
 #f:: {
-    if ProcessExist("komorebi.exe") {
-        Komorebic("toggle-monocle")
+    if ProcessExist("glazewm.exe") {
+        ; Use toggle-maximized (Keep Bar) instead of toggle-fullscreen (Hide Bar)
+        GlazeWM("toggle-maximized") 
     } else {
         if (WinGetMinMax("A") = 1)
             WinRestore("A")
@@ -141,37 +123,37 @@ SetTimer () => ToolTip(), -3000
     }
 }
 
-#+r::Komorebic("retile")
+#+r::GlazeWM("wm-redraw")
 
 ~#+s:: {
-    Komorebic("toggle-tiling")
+    GlazeWM("toggle-tiling")
     if KeyWait("LButton", "D T8")
         KeyWait("LButton")
     Sleep(500)
-    Komorebic("toggle-tiling")
+    GlazeWM("toggle-tiling")
 }
 
 ; ==============================================================================
-; HYPRLAND MOUSE BEHAVIOR (Move & Resize)
+; MOUSE BEHAVIOR (Move & Resize)
 ; ==============================================================================
 
 ; --- Super + Left Click: MOVE ---
 #LButton:: {
     MouseGetPos(&startX, &startY, &targetWin)
-    
-    ; Safety check: Don't move desktop or taskbar
+
+    ; Safety check
     try {
         class := WinGetClass(targetWin)
         if (class == "Shell_TrayWnd" || class == "WorkerW" || class == "Progman")
             return
     }
 
-    ; 1. FLOATING / NATIVE MOVE (Standard Windows Logic)
-    if !ProcessExist("komorebi.exe") { 
+    ; 1. FLOATING / NATIVE MOVE
+    if !ProcessExist("glazewm.exe") { 
         WinGetPos(&winX, &winY, , , targetWin)
         offsetX := startX - winX
         offsetY := startY - winY
-        
+
         while GetKeyState("LButton", "P") {
             MouseGetPos(&curX, &curY)
             WinMove(curX - offsetX, curY - offsetY, , , targetWin)
@@ -180,21 +162,21 @@ SetTimer () => ToolTip(), -3000
         return
     }
 
-    ; 2. TILED MOVE (Komorebi Swap Logic)
+    ; 2. TILED MOVE (GlazeWM Swap Logic)
     lastMove := A_TickCount
     while GetKeyState("LButton", "P") {
         MouseGetPos(&curX, &curY)
         diffX := curX - startX
         diffY := curY - startY
-        
+
         if (A_TickCount - lastMove > ActionCooldown) {
             if (Abs(diffX) > MoveThreshold) {
-                (diffX > 0) ? Komorebic("move right") : Komorebic("move left")
+                (diffX > 0) ? GlazeWM("move --direction right") : GlazeWM("move --direction left")
                 lastMove := A_TickCount
                 MouseGetPos(&startX, &startY) 
             }
             else if (Abs(diffY) > MoveThreshold) {
-                (diffY > 0) ? Komorebic("move down") : Komorebic("move up")
+                (diffY > 0) ? GlazeWM("move --direction down") : GlazeWM("move --direction up")
                 lastMove := A_TickCount
                 MouseGetPos(&startX, &startY)
             }
@@ -203,10 +185,10 @@ SetTimer () => ToolTip(), -3000
     }
 }
 
-; --- Super + Right Click: RESIZE (Hyprland Style) ---
+; --- Super + Right Click: RESIZE ---
 #RButton:: {
     MouseGetPos(&startX, &startY, &targetWin)
-    
+
     try {
         class := WinGetClass(targetWin)
         if (class == "Shell_TrayWnd" || class == "WorkerW")
@@ -216,28 +198,21 @@ SetTimer () => ToolTip(), -3000
         return
     }
 
-    ; 1. FLOATING RESIZE (All Directions)
-    if !ProcessExist("komorebi.exe") {
-        ; Calculate window center to determine quadrants
+    ; 1. FLOATING RESIZE
+    if !ProcessExist("glazewm.exe") {
         CenterX := winX + (winW / 2)
         CenterY := winY + (winH / 2)
-        
-        ; Determine quadrant: -1 (Left/Top), 1 (Right/Bottom)
         DirX := (startX < CenterX) ? -1 : 1
         DirY := (startY < CenterY) ? -1 : 1
-        
-        ; Store initial offsets to prevent snapping
         offW := winW
         offH := winH
         offX := winX
         offY := winY
-        
+
         while GetKeyState("RButton", "P") {
             MouseGetPos(&curX, &curY)
-            
             deltaX := curX - startX
             deltaY := curY - startY
-            
             newX := offX
             newY := offY
             newW := offW
@@ -246,51 +221,116 @@ SetTimer () => ToolTip(), -3000
             if (DirX == -1) { ; Left Side
                 newX := offX + deltaX
                 newW := offW - deltaX
-            } else {          ; Right Side
+            } else { ; Right Side
                 newW := offW + deltaX
             }
-            
+
             if (DirY == -1) { ; Top Side
                 newY := offY + deltaY
                 newH := offH - deltaY
-            } else {          ; Bottom Side
+            } else { ; Bottom Side
                 newH := offH + deltaY
             }
 
             if (newW > 50 && newH > 50)
                 WinMove(newX, newY, newW, newH, targetWin)
-                
+
             Sleep(10)
         }
         return
     }
 
-    ; 2. TILED RESIZE (Komorebi Axis)
+    ; 2. TILED RESIZE (GlazeWM Axis)
+    ; Increased resize percentage to 5% and slightly larger cooldown to reduce process spam
     lastResize := A_TickCount
     while GetKeyState("RButton", "P") {
         MouseGetPos(&curX, &curY)
         diffX := curX - startX
         diffY := curY - startY
-        
-        if (A_TickCount - lastResize > 100) { 
-            if (Abs(diffX) > ResizeThreshold) {
-                action := (diffX > 0) ? "increase" : "decrease"
-                Komorebic("resize-axis horizontal " . action)
-                startX := curX 
-                lastResize := A_TickCount
-            }
-            if (Abs(diffY) > ResizeThreshold) {
-                action := (diffY > 0) ? "increase" : "decrease"
-                Komorebic("resize-axis vertical " . action)
-                startY := curY
-                lastResize := A_TickCount
-            }
-        }
-        Sleep(10)
-    }
-}
 
-; --- System Overrides ---
-~LWin::Send("{Blind}{vkE8}") 
-#Tab::Send "!{Tab}"
-#Esc::Suspend(-1)
+        ; Slightly increased cooldown (100 -> 125ms) to reduce process spam
+        if (A_TickCount - lastResize > 125) { 
+            if (Abs(diffX) > ResizeThreshold) {
+                ; Example: If diffX > 0 (moved right), increase width
+                ; Increased step size to 5% to make resizing more responsive with fewer calls
+                action := (diffX > 0) ? "+5%" : "-5%"
+                    GlazeWM("resize --width " . action)
+                    startX := curX 
+                    lastResize := A_TickCount
+                }
+                if (Abs(diffY) > ResizeThreshold) {
+                action := (diffY > 0) ? "+5%" : "-5%"
+                    GlazeWM("resize --height " . action)
+                    startY := curY
+                    lastResize := A_TickCount
+                }
+            }
+            Sleep(10)
+        }
+    }
+
+    ; --- System Overrides ---
+    ~LWin::Send("{Blind}{vkE8}") 
+    #Tab::Send "!{Tab}"
+    #Esc::Suspend(-1)
+
+    ; ==============================================================================
+    ; SMART SPAWN LOGIC (Mouse-Based Split Direction)
+    ; ==============================================================================
+    ; Checks mouse position relative to the active window's quadrants (X logic).
+    ; Left/Right -> Horizontal Split. Top/Bottom -> Vertical Split.
+
+    SmartSpawn(appCommand) {
+        if !ProcessExist("glazewm.exe") {
+            Run(appCommand)
+            return
+        }
+
+        ; 1. Get the window under the mouse (Hyprland "Focus Follows Mouse" style)
+        MouseGetPos(&mouseX, &mouseY, &targetWin)
+
+        ; If we are hovering over the desktop/taskbar, just spawn normally
+        try {
+            class := WinGetClass(targetWin)
+            if (class == "Shell_TrayWnd" || class == "WorkerW" || class == "Progman") {
+                Run(appCommand)
+                return
+            }
+        } catch {
+            Run(appCommand)
+            return
+        }
+
+        ; 2. Calculate Mouse Position relative to that Window
+        try {
+            WinGetPos(&winX, &winY, &winW, &winH, targetWin)
+        } catch {
+            Run(appCommand)
+            return
+        }
+
+        relX := mouseX - winX
+        relY := mouseY - winY
+
+        ; 3. Determine Quadrant (The "X" Logic)
+        ; We normalize coordinates to 0.0-1.0 to handle rectangular windows correctly
+        normX := relX / winW
+        normY := relY / winH
+
+        ; Check if we are in the "Horizontal" triangles (Left/Right) or "Vertical" (Top/Bottom)
+        ; Logic: If the point is closer to the horizontal centerline than vertical centerline
+        if (Abs(normX - 0.5) > Abs(normY - 0.5)) {
+            ; Mouse is clearly Left or Right -> Horizontal Split (Side-by-Side)
+            ; Correct CLI: glazewm command set-tiling-direction horizontal
+            Run(GlazeWMPath . " command set-tiling-direction horizontal",, "Hide")
+        } else {
+            ; Mouse is clearly Top or Bottom -> Vertical Split (Stacked)
+            ; Correct CLI: glazewm command set-tiling-direction vertical
+            Run(GlazeWMPath . " command set-tiling-direction vertical",, "Hide")
+        }
+
+        ; 4. Spawn the App
+        ; Small sleep to ensure GlazeWM registered the direction change
+        Sleep(50) 
+        Run(appCommand)
+    }
