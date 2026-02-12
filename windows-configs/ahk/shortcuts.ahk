@@ -1,51 +1,78 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
-SetWinDelay(-1) 
-UserProfile := EnvGet("USERPROFILE")
+SetWinDelay(-1)
+CoordMode "Mouse", "Screen"
 
-ApplyKomorebiConfig() {
+; ==============================================================================
+; CONFIGURATION
+; ==============================================================================
+UserProfile := EnvGet("USERPROFILE")
+KomorebicPath := "komorebic.exe" ; Ensure this is in your PATH or provide full path
+
+; Visuals
+BorderColorFocused   := "235 160 172" ; Catppuccin Rosewater
+BorderColorUnfocused := "24 24 37"    ; Catppuccin Base
+BorderWidth          := 5
+Padding              := 10
+
+; Mouse Interaction Settings
+ResizeThreshold      := 20   ; Pixels to move before a tiled resize triggers
+MoveThreshold        := 80   ; Pixels to move before a tiled move/swap triggers
+ActionCooldown       := 150  ; ms between tiled actions to prevent jitter
+
+; ==============================================================================
+; KOMOREBI HELPERS
+; ==============================================================================
+Komorebic(cmd) {
     try {
-        Run("komorebic.exe focus-follows-mouse enable", , "Hide")
-        Run("komorebic.exe mouse-follows-focus enable", , "Hide")
-        Run("komorebic.exe manage-rule exe 'ScreenClippingHost.exe' ignore", , "Hide")
-        Run("komorebic.exe float-rule exe 'SnippingTool.exe'", , "Hide")
-        Run("komorebic.exe manage-rule class 'Shell_TrayWnd' ignore", , "Hide")
-        Run("komorebic.exe border enable", , "Hide")
-        Run("komorebic.exe border-width 5", , "Hide") 
-        Run("komorebic.exe border-style rounded", , "Hide") 
-        Run("komorebic.exe container-padding 10", , "Hide")
-        Run("komorebic.exe workspace-padding 10", , "Hide")
-        Run("komorebic.exe border-colour 235 160 172 --window-kind single", , "Hide")
-        Run("komorebic.exe border-colour 235 160 172 --window-kind stack", , "Hide")
-        Run("komorebic.exe border-colour 235 160 172 --window-kind floating", , "Hide")
-        Run("komorebic.exe border-colour 242 205 205 --window-kind monocle", , "Hide")
-        Run("komorebic.exe border-colour 24 24 37 --window-kind unfocused", , "Hide")
+        Run(KomorebicPath . " " . cmd, , "Hide")
+    } catch as e {
+        ; Silent fail if komorebic isn't found/running
     }
 }
 
-Komorebic(cmd) {
-    Run("komorebic.exe " . cmd, , "Hide")
+ApplyKomorebiConfig() {
+    Komorebic("focus-follows-mouse enable")
+    Komorebic("mouse-follows-focus enable")
+    Komorebic("manage-rule exe 'ScreenClippingHost.exe' ignore")
+    Komorebic("float-rule exe 'SnippingTool.exe'")
+    Komorebic("manage-rule class 'Shell_TrayWnd' ignore")
+    Komorebic("manage-rule class 'WorkerW' ignore")
+    
+    Komorebic("border enable")
+    Komorebic("border-width " . BorderWidth)
+    Komorebic("border-style rounded")
+    Komorebic("container-padding " . Padding)
+    Komorebic("workspace-padding " . Padding)
+    
+    Komorebic("border-colour " . BorderColorFocused . " --window-kind single")
+    Komorebic("border-colour " . BorderColorFocused . " --window-kind stack")
+    Komorebic("border-colour " . BorderColorFocused . " --window-kind floating")
+    Komorebic("border-colour " . BorderColorUnfocused . " --window-kind unfocused")
 }
 
 ManageKomorebiState(action) {
     if (action = "stop") {
         if ProcessExist("komorebi.exe") {
-            RunWait("komorebic.exe stop", , "Hide")
-            if ProcessExist("komorebi.exe") {
+            Komorebic("stop")
+            if ProcessExist("komorebi.exe")
                 ProcessClose("komorebi.exe")
-            }
         }
-    } 
-    else if (action = "start") {
+    } else if (action = "start") {
         if !ProcessExist("komorebi.exe") {
-            Run("komorebic.exe start", , "Hide")
-            ProcessWait("komorebi.exe", 5) 
-            Sleep(500) 
+            Komorebic("start")
+            ProcessWait("komorebi.exe", 5)
+            Sleep(500)
             ApplyKomorebiConfig()
         }
     }
 }
 
+; ==============================================================================
+; HOTKEYS
+; ==============================================================================
+
+; --- Management ---
 ToolTip("AHK Ready - Press Win+P to start Komorebi")
 SetTimer () => ToolTip(), -3000
 
@@ -53,28 +80,41 @@ SetTimer () => ToolTip(), -3000
     if ProcessExist("komorebi.exe") {
         ManageKomorebiState("stop")
         ToolTip("Komorebi Stopped")
-        SetTimer () => ToolTip(), -1500
     } else {
         ManageKomorebiState("start")
         ToolTip("Komorebi Started")
-        SetTimer () => ToolTip(), -1500
     }
+    SetTimer () => ToolTip(), -1500
 }
 
-!+h::Send "{Left}"
-!+j::Send "{Down}"
-!+k::Send "{Up}"
-!+l::Send "{Right}"
+#q::WinClose("A")
+#e::Run("powershell.exe -NoExit -Command yazi", UserProfile)
+#+e::Run("explorer.exe", UserProfile)
+#b::Run("vivaldi.exe")
+#c::Run("powershell.exe", UserProfile)
+#n::Run(UserProfile . "\AppData\Local\Programs\Obsidian\Obsidian.exe")
 
-~#+s:: {
-    Komorebic("toggle-tiling")
-    if KeyWait("LButton", "D T8") {
-        KeyWait("LButton")
-    }
-    Sleep(500)
-    Komorebic("toggle-tiling")
+#+t:: {
+    btopPath := UserProfile . "\AppData\Local\Microsoft\WinGet\Packages\aristocratos.btop4win_Microsoft.WinGet.Source_8wekyb3d8bbwe\btop4win\btop4win.exe"
+    if FileExist(btopPath)
+        Run('powershell.exe -Command "' . btopPath . '"', UserProfile)
+    else
+        Run('powershell.exe -Command "btop4win"', UserProfile)
 }
 
+; --- Window Focus (Vim keys) ---
+#h::Komorebic("focus left")
+#j::Komorebic("focus down")
+#k::Komorebic("focus up")
+#l::Komorebic("focus right")
+
+; --- Window Move (Vim keys) ---
+#+h::Komorebic("move left")
+#+j::Komorebic("move down")
+#+k::Komorebic("move up")
+#+l::Komorebic("move right")
+
+; --- Workspaces ---
 #1::Komorebic("focus-workspace 0")
 #2::Komorebic("focus-workspace 1")
 #3::Komorebic("focus-workspace 2")
@@ -87,11 +127,13 @@ SetTimer () => ToolTip(), -3000
 #+4::Komorebic("move-to-workspace 3")
 #+5::Komorebic("move-to-workspace 4")
 
+; --- Tiling Toggles ---
+
+; CORRECTED: Handles Monocle if Komorebi is running, else Standard Maximize
 #f:: {
     if ProcessExist("komorebi.exe") {
         Komorebic("toggle-monocle")
     } else {
-        WinGetPos(&X, &Y, &W, &H, "A")
         if (WinGetMinMax("A") = 1)
             WinRestore("A")
         else
@@ -100,81 +142,155 @@ SetTimer () => ToolTip(), -3000
 }
 
 #+r::Komorebic("retile")
-#q::WinClose("A")
 
-#e::Run("powershell.exe -NoExit -Command yazi", UserProfile)
-#+e::Run("explorer.exe", UserProfile)
-#b:: Run("vivaldi.exe")
-#n:: Run(UserProfile . "\AppData\Local\Programs\Obsidian\Obsidian.exe")
-#c:: Run("powershell.exe", UserProfile)
-
-#+t:: {
-    btopPath := UserProfile . "\AppData\Local\Microsoft\WinGet\Packages\aristocratos.btop4win_Microsoft.WinGet.Source_8wekyb3d8bbwe\btop4win\btop4win.exe"
-    if FileExist(btopPath) {
-        Run('powershell.exe -Command "' . btopPath . '"', UserProfile)
-    } else {
-        Run('powershell.exe -Command "btop4win"', UserProfile)
-    }
+~#+s:: {
+    Komorebic("toggle-tiling")
+    if KeyWait("LButton", "D T8")
+        KeyWait("LButton")
+    Sleep(500)
+    Komorebic("toggle-tiling")
 }
 
-#u::Komorebic("focus up")    
-#h::Komorebic("focus down")  
-#j::Komorebic("focus left")  
-#k::Komorebic("focus right") 
+; ==============================================================================
+; HYPRLAND MOUSE BEHAVIOR (Move & Resize)
+; ==============================================================================
 
-#+u::Komorebic("move up")    
-#+h::Komorebic("move down")  
-#+j::Komorebic("move left")  
-#+k::Komorebic("move right") 
-
+; --- Super + Left Click: MOVE ---
 #LButton:: {
-    if ProcessExist("komorebi.exe") {
-        MouseGetPos(&startX, &startY)
-        Threshold := 80 
-        Cooldown  := 250
+    MouseGetPos(&startX, &startY, &targetWin)
+    
+    ; Safety check: Don't move desktop or taskbar
+    try {
+        class := WinGetClass(targetWin)
+        if (class == "Shell_TrayWnd" || class == "WorkerW" || class == "Progman")
+            return
+    }
+
+    ; 1. FLOATING / NATIVE MOVE (Standard Windows Logic)
+    if !ProcessExist("komorebi.exe") { 
+        WinGetPos(&winX, &winY, , , targetWin)
+        offsetX := startX - winX
+        offsetY := startY - winY
+        
         while GetKeyState("LButton", "P") {
             MouseGetPos(&curX, &curY)
-            diffX := curX - startX
-            diffY := curY - startY
-            if (Abs(diffX) > Threshold) {
-                (diffX > 0) ? Komorebic("move right") : Komorebic("move left")
-                Sleep(Cooldown) 
-                MouseGetPos(&startX, &startY) 
-            }
-            if (Abs(diffY) > Threshold) {
-                (diffY > 0) ? Komorebic("move down") : Komorebic("move up")
-                Sleep(Cooldown)
-                MouseGetPos(&startX, &startY)
-            }
+            WinMove(curX - offsetX, curY - offsetY, , , targetWin)
             Sleep(10)
         }
-    } else {
-        CoordMode "Mouse", "Screen"
-        MouseGetPos(&startX, &startY, &targetWin)
-        if (WinGetClass(targetWin) == "Shell_TrayWnd" || WinGetClass(targetWin) == "WorkerW")
-            return
-        WinGetPos(&winX, &winY, ,, targetWin)
-        while GetKeyState("LButton", "P") {
-            MouseGetPos(&mouseX, &mouseY)
-            WinMove(winX + (mouseX - startX), winY + (mouseY - startY),,, targetWin)
+        return
+    }
+
+    ; 2. TILED MOVE (Komorebi Swap Logic)
+    lastMove := A_TickCount
+    while GetKeyState("LButton", "P") {
+        MouseGetPos(&curX, &curY)
+        diffX := curX - startX
+        diffY := curY - startY
+        
+        if (A_TickCount - lastMove > ActionCooldown) {
+            if (Abs(diffX) > MoveThreshold) {
+                (diffX > 0) ? Komorebic("move right") : Komorebic("move left")
+                lastMove := A_TickCount
+                MouseGetPos(&startX, &startY) 
+            }
+            else if (Abs(diffY) > MoveThreshold) {
+                (diffY > 0) ? Komorebic("move down") : Komorebic("move up")
+                lastMove := A_TickCount
+                MouseGetPos(&startX, &startY)
+            }
         }
+        Sleep(10)
     }
 }
 
+; --- Super + Right Click: RESIZE (Hyprland Style) ---
 #RButton:: {
-    if !ProcessExist("komorebi.exe") {
-        CoordMode "Mouse", "Screen"
-        MouseGetPos(&startX, &startY, &targetWin)
-        if (WinGetClass(targetWin) == "Shell_TrayWnd" || WinGetClass(targetWin) == "WorkerW")
+    MouseGetPos(&startX, &startY, &targetWin)
+    
+    try {
+        class := WinGetClass(targetWin)
+        if (class == "Shell_TrayWnd" || class == "WorkerW")
             return
         WinGetPos(&winX, &winY, &winW, &winH, targetWin)
+    } catch {
+        return
+    }
+
+    ; 1. FLOATING RESIZE (All Directions)
+    if !ProcessExist("komorebi.exe") {
+        ; Calculate window center to determine quadrants
+        CenterX := winX + (winW / 2)
+        CenterY := winY + (winH / 2)
+        
+        ; Determine quadrant: -1 (Left/Top), 1 (Right/Bottom)
+        DirX := (startX < CenterX) ? -1 : 1
+        DirY := (startY < CenterY) ? -1 : 1
+        
+        ; Store initial offsets to prevent snapping
+        offW := winW
+        offH := winH
+        offX := winX
+        offY := winY
+        
         while GetKeyState("RButton", "P") {
-            MouseGetPos(&mouseX, &mouseY)
-            WinMove(,, winW + (mouseX - startX), winH + (mouseY - startY), targetWin)
+            MouseGetPos(&curX, &curY)
+            
+            deltaX := curX - startX
+            deltaY := curY - startY
+            
+            newX := offX
+            newY := offY
+            newW := offW
+            newH := offH
+
+            if (DirX == -1) { ; Left Side
+                newX := offX + deltaX
+                newW := offW - deltaX
+            } else {          ; Right Side
+                newW := offW + deltaX
+            }
+            
+            if (DirY == -1) { ; Top Side
+                newY := offY + deltaY
+                newH := offH - deltaY
+            } else {          ; Bottom Side
+                newH := offH + deltaY
+            }
+
+            if (newW > 50 && newH > 50)
+                WinMove(newX, newY, newW, newH, targetWin)
+                
+            Sleep(10)
         }
+        return
+    }
+
+    ; 2. TILED RESIZE (Komorebi Axis)
+    lastResize := A_TickCount
+    while GetKeyState("RButton", "P") {
+        MouseGetPos(&curX, &curY)
+        diffX := curX - startX
+        diffY := curY - startY
+        
+        if (A_TickCount - lastResize > 100) { 
+            if (Abs(diffX) > ResizeThreshold) {
+                action := (diffX > 0) ? "increase" : "decrease"
+                Komorebic("resize-axis horizontal " . action)
+                startX := curX 
+                lastResize := A_TickCount
+            }
+            if (Abs(diffY) > ResizeThreshold) {
+                action := (diffY > 0) ? "increase" : "decrease"
+                Komorebic("resize-axis vertical " . action)
+                startY := curY
+                lastResize := A_TickCount
+            }
+        }
+        Sleep(10)
     }
 }
 
-~LWin::Send("{Blind}{vkE8}")
+; --- System Overrides ---
+~LWin::Send("{Blind}{vkE8}") 
 #Tab::Send "!{Tab}"
 #Esc::Suspend(-1)
