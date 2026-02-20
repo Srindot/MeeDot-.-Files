@@ -9,41 +9,10 @@ UserProfile := EnvGet("USERPROFILE")
 ; 1. CORE FUNCTIONS (Toggle & Config)
 ; ==============================================================================
 
-ApplyKomorebiConfig() {
-    try {
-        ; --- BEHAVIOR ---
-        ; Disabling focus-follows-mouse to prevent menus from closing when hovering out
-        Run("komorebic.exe focus-follows-mouse disable", , "Hide")
-        Run("komorebic.exe mouse-follows-focus enable", , "Hide")
-
-        ; --- IGNORE RULES ---
-        Run("komorebic.exe manage-rule class '#32768' ignore", , "Hide") ; Standard Windows Menus
-        Run("komorebic.exe manage-rule class 'Windows.UI.Core.CoreWindow' ignore", , "Hide") ; UWP Popups
-        Run("komorebic.exe manage-rule class 'Chrome_RenderWidgetHostHWND' ignore", , "Hide") ; Chrome/Electron Popups
-        Run("komorebic.exe manage-rule exe 'ScreenClippingHost.exe' ignore", , "Hide")
-        Run("komorebic.exe float-rule exe 'SnippingTool.exe'", , "Hide")
-        Run("komorebic.exe manage-rule class 'Shell_TrayWnd' ignore", , "Hide")
-
-        ; --- VISUALS ---
-        Run("komorebic.exe border enable", , "Hide")
-        Run("komorebic.exe border-width 5", , "Hide") 
-        Run("komorebic.exe border-style rounded", , "Hide") 
-        Run("komorebic.exe container-padding 10", , "Hide")
-        Run("komorebic.exe workspace-padding 10", , "Hide")
-
-        ; --- COLORS ---
-        Run("komorebic.exe border-colour 235 160 172 --window-kind single", , "Hide")
-        Run("komorebic.exe border-colour 235 160 172 --window-kind stack", , "Hide")
-        Run("komorebic.exe border-colour 235 160 172 --window-kind floating", , "Hide")
-        Run("komorebic.exe border-colour 242 205 205 --window-kind monocle", , "Hide")
-        Run("komorebic.exe border-colour 24 24 37 --window-kind unfocused", , "Hide")
-    }
-}
-
 Komorebic(cmd) {
     ; Helper to run komorebic commands silently
     try {
-        Run("komorebic.exe " . cmd, , "Hide")
+        RunWait("komorebic.exe " . cmd, , "Hide")
     }
 }
 
@@ -53,14 +22,18 @@ ManageKomorebiState(action) {
             RunWait("komorebic.exe stop", , "Hide")
             if ProcessExist("komorebi.exe")
                 ProcessClose("komorebi.exe")
+            
+            ; Stop masir when native mode is active
+            if ProcessExist("masir.exe")
+                ProcessClose("masir.exe")
         }
     } 
     else if (action = "start") {
         if !ProcessExist("komorebi.exe") {
-            Run("komorebic.exe start", , "Hide")
+            ; Start komorebi with the masir hook enabled
+            Run("komorebic.exe start --masir", , "Hide")
             ProcessWait("komorebi.exe", 5) 
             Sleep(500) 
-            ApplyKomorebiConfig()
         }
     }
 }
@@ -69,12 +42,8 @@ ManageKomorebiState(action) {
 ; 2. GLOBAL SYSTEM HOTKEYS (Always Active)
 ; ==============================================================================
 
-; Auto-Apply Config on Script Reload (if Komorebi is already running)
-if ProcessExist("komorebi.exe")
-    ApplyKomorebiConfig()
-
-; Toggle Komorebi (Win + P)
-#p:: {
+; Toggle Komorebi (Win + O)
+#o:: {
     if ProcessExist("komorebi.exe") {
         ManageKomorebiState("stop")
         ToolTip("Komorebi OFF - Native Mode")
