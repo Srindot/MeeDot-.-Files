@@ -57,12 +57,19 @@ ManageKomorebiState(action) {
 ; Close Window (Win + Q)
 #q::WinClose("A")
 
+; Alt + Backspace to Delete button 
+!BackSpace::Send "{Delete}"
+
+; Ctrl + Alt + Backspace to Delete Entire Next Word  
++!BackSpace::Send "^{Delete}"
+
 ; App Launchers (Win + E, B, N, C, T)
-#e::Run("powershell.exe -NoExit -Command yazi", UserProfile)
+#e::Run('wt.exe -p "Arch" wsl.exe bash -ic "yazi"', UserProfile)
 #+e::Run("explorer.exe", UserProfile)
 #b::Run("vivaldi.exe")
 #n::Run(UserProfile . "\AppData\Local\Programs\Obsidian\Obsidian.exe")
-#c::Run("powershell.exe", UserProfile)
+; #c::Run("powershell.exe", UserProfile)
+#c::Run("wt.exe ", UserProfile)
 #+t:: {
     btopPath := UserProfile . "\AppData\Local\Microsoft\WinGet\Packages\aristocratos.btop4win_Microsoft.WinGet.Source_8wekyb3d8bbwe\btop4win\btop4win.exe"
     if FileExist(btopPath)
@@ -136,12 +143,10 @@ ManageKomorebiState(action) {
     }
 
     ; --- STATE: KOMOREBI OFF (Standard Move) ---
-    ; Calculate offset so window sticks to mouse properly
     WinGetPos(&winX, &winY,,, targetWin)
     offsetX := startX - winX
     offsetY := startY - winY
 
-    ; If maximized, restore it first so we can move it
     if (WinGetMinMax(targetWin) = 1)
         WinRestore(targetWin)
 
@@ -154,13 +159,11 @@ ManageKomorebiState(action) {
 
 ; Win + Right Click (Native Resize ONLY when OFF)
 #RButton:: {
-    ; If Komorebi is ON, we disable scaling completely (Return immediately)
     if ProcessExist("komorebi.exe")
         return 
 
     MouseGetPos(&startX, &startY, &targetWin)
 
-    ; Safety Check
     try {
         class := WinGetClass(targetWin)
         if (class == "Shell_TrayWnd" || class == "WorkerW")
@@ -170,8 +173,6 @@ ManageKomorebiState(action) {
         return
     }
 
-    ; --- STATE: KOMOREBI OFF (HYPRLAND NATIVE RESIZE) ---
-    ; Determine Quadrants
     CenterX := winX + (winW / 2)
     CenterY := winY + (winH / 2)
     ResizeLeft := (startX < CenterX)
@@ -186,7 +187,6 @@ ManageKomorebiState(action) {
 
         NewX := OrigX, NewY := OrigY, NewW := OrigW, NewH := OrigH
 
-        ; Horizontal Logic
         if (ResizeLeft) {
             NewX := OrigX + dx
             NewW := OrigW - dx
@@ -194,7 +194,6 @@ ManageKomorebiState(action) {
             NewW := OrigW + dx
         }
 
-        ; Vertical Logic
         if (ResizeTop) {
             NewY := OrigY + dy
             NewH := OrigH - dy
@@ -202,7 +201,6 @@ ManageKomorebiState(action) {
             NewH := OrigH + dy
         }
 
-        ; Apply if size is safe (>50px)
         if (NewW > 50 && NewH > 50)
             WinMove(NewX, NewY, NewW, NewH, targetWin)
 
@@ -226,13 +224,51 @@ ManageKomorebiState(action) {
 
 #+r::Komorebic("retile")
 
-; Vim Arrows
+; ==============================================================================
+; 5. VIM ARROWS & WORD JUMPING
+; ==============================================================================
+
+; Normal Arrows (Alt + Shift + H/J/K/L)
 !+h::Send "{Left}"
 !+j::Send "{Down}"
 !+k::Send "{Up}"
 !+l::Send "{Right}"
 
-; Workspaces
+; Old script (Failed, Syntax Error: can't use & and operators(^,% and, +) in the same line)
+; ; Jump Words (Alt + Shift + C + H/L) 
+; !+c&h::Send "^{Left}"
+; !+c&l::Send "^{Right}"
+;
+; ; Select Jumped Words (Alt + Shift + X + H/L)
+; !+x&h::Send "^{Left}"
+; !+x&l::Send "^{Right}"
+;
+; ; Select characters (Alt + Shift + V + H/L)
+; !+v&h::Send "^{Left}"
+; !+v&l::Send "^{Right}"
+
+; Enter condition if Alt + Shift is held down 
+
+#HotIf GetKeyState("Alt", "P") && GetKeyState("Shift", "P")
+
+; C + H/L = To Jump Words 
+c & h::Send "^{Left}"
+c & l:: Send "^{Right}"
+
+; X + H/L = To Select Jumped Words
+x & h::Send "^+{Left}"
+x & l:: Send "^+{Right}"
+
+; Z + H/L = To Select Characters
+z & h::Send "+{Left}"
+z & l:: Send "+{Right}"
+
+#HotIf
+
+; ==============================================================================
+; 6. WORKSPACES & MISC
+; ==============================================================================
+
 #1::Komorebic("focus-workspace 0")
 #2::Komorebic("focus-workspace 1")
 #3::Komorebic("focus-workspace 2")
@@ -255,17 +291,24 @@ ManageKomorebiState(action) {
 
 ; Screenshot Tool
 ~#+s:: {
-    if ProcessExist("komorebi.exe") {
-        Komorebic("toggle-tiling")
-        if KeyWait("LButton", "D T8") {
-            KeyWait("LButton")
-        }
-        Sleep(500)
-        Komorebic("toggle-tiling")
-    }
+    ; Pass the native Windows shortcut through.
+    ; Komorebi's JSON will automatically float the clipping overlay.
 }
 
 ; System Overrides
 ~LWin::Send("{Blind}{vkE8}")
 #Tab::Send "!{Tab}"
 #Esc::Suspend(-1)
+
+; ==============================================================================
+; 7. FLOW LAUNCHER
+; ==============================================================================
+
+; Press Win + S to launch Flow Launcher instantly
+#s:: {
+    Send "{Blind}{LWin up}{RWin up}" ; Instantly releases the Win key logically
+    Send "!+-"                       ; Sends the new safe combo (Alt + Shift + Minus)
+}
+
+; ==============================================================================
+

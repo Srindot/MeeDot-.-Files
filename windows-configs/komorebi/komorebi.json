@@ -1,0 +1,111 @@
+{
+  "$schema": "https://raw.githubusercontent.com/LGUG2Z/komorebi/v0.1.40/schema.json",
+  "app_specific_configuration_path": "$Env:USERPROFILE/applications.json",
+  "animation": {
+    "enabled": true,
+    "duration": 38,
+    "fps": 120,
+    "style": "EaseOutSine"
+  },
+  "window_hiding_behaviour": "Cloak",
+  "cross_monitor_move_behaviour": "Insert",
+  "default_workspace_padding": 10,
+  "default_container_padding": 10,
+  "border": true,
+  "border_width": 5,
+  "border_offset": -1,
+  "border_style": "Rounded",
+  "mouse_follows_focus": true,
+  "border_colours": {
+    "single": {
+      "r": 235,
+      "g": 160,
+      "b": 172
+    },
+    "stack": {
+      "r": 235,
+      "g": 160,
+      "b": 172
+    },
+    "floating": {
+      "r": 235,
+      "g": 160,
+      "b": 172
+    },
+    "monocle": {
+      "r": 242,
+      "g": 205,
+      "b": 205
+    },
+    "unfocused": {
+      "r": 24,
+      "g": 24,
+      "b": 37
+    }
+  },
+  "floating_applications": [
+    {
+      "kind": "Exe",
+      "id": "SnippingTool.exe"
+    },
+    {
+      "kind": "Class",
+      "id": "#32768",
+      "matching_strategy": "Equals"
+    },
+    {
+      "kind": "Class",
+      "id": "Windows.UI.Core.CoreWindow",
+      "matching_strategy": "Equals"
+    },
+    {
+      "kind": "Class",
+      "id": "Chrome_RenderWidgetHostHWND",
+      "matching_strategy": "Equals"
+    },
+    {
+      "kind": "Exe",
+      "id": "ScreenClippingHost.exe",
+      "matching_strategy": "Equals"
+    },
+    {
+        "kind": "Class",
+        "id": "Shell_TrayWnd",
+        "matching_strategy": "Equals"
+    }
+  ],
+    "monitors": [
+    {
+      "workspaces": [
+        {
+          "name": "I",
+          "layout": "Grid"
+        },
+        {
+          "name": "II",
+          "layout": "Grid"
+        },
+        {
+          "name": "III",
+          "layout": "Grid"
+        },
+        {
+          "name": "IV",
+          "layout": "Grid"
+        },
+        {
+          "name": "V",
+          "layout": "Grid"
+        },
+        {
+          "name": "VI",
+          "layout": "Grid"
+        },
+        {
+          "name": "VII",
+          "layout": "Grid"
+        }
+      ]
+    }
+  ]
+}
