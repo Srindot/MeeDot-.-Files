@@ -29,8 +29,15 @@
 
 vim.g.mapleader = " "
 
--- 1. FILE NAVIGATION
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex) -- Open file explorer
+-- 1. SMART FILE NAVIGATION
+vim.keymap.set("n", "<leader>pv", function()
+    local view = require("nvim-tree.view")
+    if view.is_visible() then
+        view.focus()
+    else
+        vim.cmd("NvimTreeOpen")
+    end
+end, { desc = "Focus or Open NvimTree" })
 
 -- 2. BETTER SCROLLING (Keeps cursor in the middle)
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
@@ -51,16 +58,9 @@ vim.keymap.set("n", "J", "mzJ`z")
 -- <leader>p: Paste over text without copying the deleted text
 vim.keymap.set("x", "<leader>p", [["_dP]])
 
--- <leader>y: Copy to system clipboard (so you can paste in browser)
-vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
-vim.keymap.set("n", "<leader>Y", [["+Y]])
-
--- <leader>d: Delete to void register (doesn't mess up your clipboard)
-vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
-
 -- 6. UTILITIES
 -- Quick Save (Optional, but handy)
--- vim.keymap.set("n", "<C-s>", ":w<CR>")
+vim.keymap.set("n", "<C-s>", ":w<CR>")
 
 -- Clear search highlights when pressing Esc
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')

@@ -4,38 +4,6 @@ SetWinDelay(-1)
 UserProfile := EnvGet("USERPROFILE")
 
 ; ---------------------------------------------------------
-; 1. CONFIGURATION FUNCTION (Fast Apply)
-; ---------------------------------------------------------
-ApplyKomorebiConfig() {
-    try {
-        ; --- BEHAVIOR ---
-        Run("komorebic.exe focus-follows-mouse enable", , "Hide")
-        Run("komorebic.exe mouse-follows-focus enable", , "Hide")
-
-        ; --- IGNORE RULES ---
-        Run("komorebic.exe manage-rule exe 'ScreenClippingHost.exe' ignore", , "Hide")
-        Run("komorebic.exe float-rule exe 'SnippingTool.exe'", , "Hide")
-        Run("komorebic.exe manage-rule class 'Shell_TrayWnd' ignore", , "Hide")
-
-        ; --- VISUALS ---
-        Run("komorebic.exe border enable", , "Hide")
-        Run("komorebic.exe border-width 5", , "Hide") 
-        Run("komorebic.exe border-style rounded", , "Hide") 
-        
-        ; Gapping
-        Run("komorebic.exe container-padding 10", , "Hide")
-        Run("komorebic.exe workspace-padding 10", , "Hide")
-
-        ; --- COLORS ---
-        Run("komorebic.exe border-colour 235 160 172 --window-kind single", , "Hide")
-        Run("komorebic.exe border-colour 235 160 172 --window-kind stack", , "Hide")
-        Run("komorebic.exe border-colour 235 160 172 --window-kind floating", , "Hide")
-        Run("komorebic.exe border-colour 242 205 205 --window-kind monocle", , "Hide")
-        Run("komorebic.exe border-colour 24 24 37 --window-kind unfocused", , "Hide")
-    }
-}
-
-; ---------------------------------------------------------
 ; 2. SMART PROCESS MANAGER
 ; ---------------------------------------------------------
 Komorebic(cmd) {
@@ -56,7 +24,6 @@ ManageKomorebiState(action) {
             Run("komorebic.exe start", , "Hide")
             ProcessWait("komorebi.exe", 5) 
             Sleep(500) 
-            ApplyKomorebiConfig()
         }
     }
 }
@@ -84,13 +51,21 @@ SetTimer () => ToolTip(), -3000
     }
 }
 
+#o:: {
+    if !ProcessExist("komorebi.exe") {
+        ManageKomorebiState("start")
+        ToolTip("Komorebi Launched")
+        SetTimer () => ToolTip(), -1500
+    }
+}
+
 ; ---------------------------------------------------------
 ; VIM ARROWS
 ; ---------------------------------------------------------
-!+h::Send "{Left}"
-!+j::Send "{Down}"
-!+k::Send "{Up}"
-!+l::Send "{Right}"
+!+h::Send "{Blind}{Left}"
+!+j::Send "{Blind}{Down}"
+!+k::Send "{Blind}{Up}"
+!+l::Send "{Blind}{Right}"
 
 ; ---------------------------------------------------------
 ; SCREENSHOT INTERCEPTOR
@@ -144,14 +119,14 @@ SetTimer () => ToolTip(), -3000
 ; ---------------------------------------------------------
 ; WINDOW MOVING
 ; ---------------------------------------------------------
-#u::Komorebic("focus up")    
-#h::Komorebic("focus down")  
-#j::Komorebic("focus left")  
+#u::Komorebic("focus up") 
+#h::Komorebic("focus down") 
+#j::Komorebic("focus left") 
 #k::Komorebic("focus right") 
 
-#+u::Komorebic("move up")    
-#+h::Komorebic("move down")  
-#+j::Komorebic("move left")  
+#+u::Komorebic("move up") 
+#+h::Komorebic("move down") 
+#+j::Komorebic("move left") 
 #+k::Komorebic("move right") 
 
 ; ---------------------------------------------------------
@@ -160,13 +135,13 @@ SetTimer () => ToolTip(), -3000
 #LButton:: {
     MouseGetPos(&startX, &startY)
     Threshold := 80 
-    Cooldown  := 250
-    
+    Cooldown := 250
+
     while GetKeyState("LButton", "P") {
         MouseGetPos(&curX, &curY)
         diffX := curX - startX
         diffY := curY - startY
-        
+
         if (Abs(diffX) > Threshold) {
             (diffX > 0) ? Komorebic("move right") : Komorebic("move left")
             Sleep(Cooldown) 

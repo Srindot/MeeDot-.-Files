@@ -1,0 +1,73 @@
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+
+    "logo": {
+        "type": "raw",      
+        "source": "/home/sriney/.config/fastfetch/rosepine.sixel",
+        "width": 20,
+        "height": 13,
+        "padding": {
+            "top": 1
+        },
+        "chafa": {
+            "graphics": "sixel",
+            "fgOnly": false
+        }
+    },
+
+    "display": {
+        "separator": " \u001b[38;2;235;188;186m->\u001b[0m "
+    },
+    "modules": [
+        "break",
+        {
+            "type": "title",
+            "keyWidth": 10,
+            "format": "         \u001b[38;2;196;167;231m{6}\u001b[38;2;235;188;186m{7}\u001b[38;2;156;207;216m{8}\u001b[0m"
+        },
+        {
+            "type": "custom",
+            "format": " \u001b[38;2;144;140;170m─────────────\u001b[38;2;196;167;231m\u001b[38;2;144;140;170m──────────────\u001b[0m "
+        },
+        {
+            "type": "kernel",
+            "key": "\u001b[38;2;235;188;186m\u001b[0m ",
+            "keyColor": "#ebbcba"
+        },
+        {
+            "type": "wm",
+            "key": "\u001b[38;2;196;167;231m\u001b[0m ",
+            "keyColor": "#c4a7e7"
+        },
+        {
+            "type": "shell",
+            "key": "\u001b[38;2;246;193;119m\u001b[0m ",
+            "keyColor": "#f6c177"
+        },
+        {
+            "type": "terminal",
+            "key": "\u001b[38;2;156;207;216m\u001b[0m ",
+            "keyColor": "#9ccfd8"
+        },
+        {
+            "type": "memory",
+            "key": "\u001b[38;2;49;116;143m󰍛\u001b[0m ",
+            "keyColor": "#31748f",
+            "format": "{1} / {2}"
+        },
+        {
+            "type": "uptime",
+            "key": "\u001b[38;2;235;111;146m󰔛\u001b[0m ",
+            "keyColor": "#eb6f92"
+        },
+        {
+            "type": "custom",
+            "format": " \u001b[38;2;144;140;170m─────────────\u001b[38;2;196;167;231m\u001b[38;2;144;140;170m──────────────\u001b[0m "
+        },
+        {
+            "type": "custom",
+            "format": "         \u001b[38;2;235;111;146m\u001b[0m \u001b[38;2;246;193;119m\u001b[0m \u001b[38;2;235;188;186m\u001b[0m \u001b[38;2;49;116;143m\u001b[0m \u001b[38;2;156;207;216m\u001b[0m \u001b[38;2;196;167;231m\u001b[0m"
+        },
+        "break"
+    ]
+}
