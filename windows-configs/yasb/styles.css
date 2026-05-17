@@ -1,30 +1,30 @@
 :root {
-    --rosewater: #f5e0dc;
-    --flamingo: #f2cdcd;
-    --pink: #f5c2e7;
-    --mauve: #cba6f7;
-    --red: #f38ba8;
-    --maroon: #eba0ac;
-    --peach: #fab387;
-    --yellow: #f9e2af;
-    --green: #a6e3a1;
-    --teal: #94e2d5;
-    --sky: #89dceb;
-    --sapphire: #74c7ec;
-    --blue: #89b4fa;
-    --lavender: #b4befe;
-    --text: #cdd6f4;
-    --subtext1: #bac2de;
-    --subtext0: #a6adc8;
-    --overlay2: #9399b2;
-    --overlay1: #7f849c;
-    --overlay0: #6c7086;
-    --surface2: #585b70;
-    --surface1: #45475a;
-    --surface0: #282936;
-    --base: #1e1e2e;
-    --mantle: rgba(24, 24, 37, 0.5);
-    --crust: rgba(17, 17, 27, 0.5);
+    --rosewater: #ebbcba;
+    --flamingo: #ebbcba;
+    --pink: #ebbcba;
+    --mauve: #c4a7e7;
+    --red: #eb6f92;
+    --maroon: #eb6f92;
+    --peach: #f6c177;
+    --yellow: #f6c177;
+    --green: #31748f;
+    --teal: #9ccfd8;
+    --sky: #9ccfd8;
+    --sapphire: #31748f;
+    --blue: #31748f;
+    --lavender: #c4a7e7;
+    --text: #e0def4;
+    --subtext1: #908caa;
+    --subtext0: #908caa;
+    --overlay2: #6e6a86;
+    --overlay1: #6e6a86;
+    --overlay0: #6e6a86;
+    --surface2: #524f67;
+    --surface1: #403d52;
+    --surface0: #1f1d2e;
+    --base: #191724;
+    --mantle: rgba(33, 32, 46, 0.5);
+    --crust: rgba(18, 16, 26, 0.5);
 }
 
 * {
@@ -39,7 +39,7 @@
 .yasb-bar {
     padding: 0 6px;
     margin: 0;
-    background-color: rgba(30, 30, 46, 0.65);
+    background-color: rgba(31, 29, 46, 0.65);
     border-radius: 12px;
 }
 
@@ -132,13 +132,13 @@
 .uptime {
     font-size: 14px;
     margin-bottom: 10px;
-    color: rgba(191, 202, 219, 0.726);
+    color: rgba(224, 222, 244, 0.726);
     font-weight: 600;
     font-family: "Segoe UI";
 }
 
 .power-menu-widget .label {
-    color: #eba0ac;
+    color: #eb6f92;
     font-size: 16px;
 }
 
@@ -147,38 +147,37 @@
     width: 160px;
     height: 240px;
     border-radius: 6px;
-    background-color: rgba(41, 42, 58, 0.75);
+    background-color: rgba(64, 61, 82, 0.75);
     font-family: "Segoe UI";
-    color: white;
+    color: #e0def4;
     border: 4px solid rgba(255, 255, 255, 0);
-
 }
 
 .power-menu-popup .button.hover {
-    background-color: rgb(55, 56, 75);
-    border: 4px solid rgb(55, 56, 75);
+    background-color: rgb(82, 79, 103);
+    border: 4px solid rgb(82, 79, 103);
 }
 
 .power-menu-popup .button .label {
     margin-bottom: 8px;
     font-size: 16px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(224, 222, 244, 0.6);
     font-family: "Segoe UI";
 }
 
 .power-menu-popup .button .icon {
     font-size: 64px;
     padding-top: 54px;
-    color: rgba(255, 255, 255, 0.25);
+    color: rgba(224, 222, 244, 0.25);
 }
 
 .power-menu-popup .button.cancel .icon {
-    color: rgba(243, 139, 168, 0.55);
+    color: rgba(235, 111, 146, 0.55);
 }
 
 .power-menu-popup .button.cancel .label {
-    color: rgba(243, 139, 168, 0.95);
+    color: rgba(235, 111, 146, 0.95);
 }
 
 .wifi-widget {
@@ -227,11 +226,11 @@
 }
 
 .weather-widget .icon.sunnyDay {
-    color: rgb(221, 210, 107);
+    color: rgb(246, 193, 119);
 }
 
 .weather-widget .icon.clearNight {
-    color: rgb(107, 189, 221);
+    color: rgb(156, 207, 216);
     font-size: 20px;
     margin: -1px 2px 0px 0;
 }
@@ -242,11 +241,11 @@
 
 .weather-widget .icon.cloudyDay {
     font-size: 18px;
-    color: rgb(221, 210, 107);
+    color: rgb(246, 193, 119);
 }
 
 .weather-widget .icon.rainyDay {
-    color: rgb(245, 224, 220)
+    color: rgb(235, 188, 186)
 }
 
 .media-widget {
@@ -303,14 +302,14 @@
 }
 
 .wallpapers-gallery-window {
-    background-color: rgba(24, 24, 37, 220);
+    background-color: rgba(25, 23, 36, 220);
     border: 0;
     margin: 0;
 }
 
 .wallpapers-gallery-buttons {
     background-color: rgba(255, 255, 255, 0);
-    color: white;
+    color: var(--text);
     border: none;
     font-size: 14px;
     padding: 8px 0;
@@ -320,7 +319,7 @@
 }
 
 .wallpapers-gallery-buttons:hover {
-    background-color: rgba(255, 255, 255, 0.1)
+    background-color: rgba(224, 222, 244, 0.1)
 }
 
 .wallpapers-gallery-image {
@@ -380,7 +379,7 @@
 
 .obs-widget .recording {
     font-size: 18px;
-    color: #d20f39;
+    color: #eb6f92;
 }
 
 .obs-widget .paused {

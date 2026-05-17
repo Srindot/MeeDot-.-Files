@@ -7740,3 +7740,22 @@ RuntimeError: wrapped C/C++ object of type QScreen has been deleted
 2026-05-17 11:58:30,663 [DEBUG] [Dummy-9] [qasync._windows._EventWorker/_windows.py:204]: Exiting thread
 2026-05-17 11:58:30,666 [DEBUG] [MainThread] [qasync._windows._IocpProactor/_windows.py:78]: Closing
 2026-05-17 11:58:30,699 [DEBUG] [MainThread] [systray_widget/utils.py:96]: Destroying window 67180
+2026-05-17 12:02:53,594 [INFO] [MainThread] [root/log.py:69]: YASB v1.8.5
+2026-05-17 12:02:53,595 [INFO] [Thread-1 (_run_server)] [cli_server/cli_server.py:212]: CLI server started v1.1.4
+2026-05-17 12:02:53,595 [INFO] [MainThread] [cli_server/cli_server.py:104]: Log pipe server started
+2026-05-17 12:02:54,933 [INFO] [MainThread] [root/service.py:48]: AudioOutputService starting...
+2026-05-17 12:02:56,195 [INFO] [MainThread] [root/bar_manager.py:85]: Starting WindowsNotificationEventListener...
+2026-05-17 12:02:56,197 [INFO] [MainThread] [root/bar_manager.py:85]: Starting SystemEventListener...
+2026-05-17 12:02:56,197 [INFO] [MainThread] [root/bar_manager.py:85]: Starting KomorebiEventListener...
+2026-05-17 12:02:56,198 [INFO] [MainThread] [root/watcher.py:54]: Created file watcher for path C:\Users\Srinath\.config\yasb
+2026-05-17 12:02:56,201 [INFO] [Dummy-6] [root/event_listener.py:51]: Created named pipe yasb-3d7402d3-51ba-11f1-831f-b48c9d368940
+2026-05-17 12:02:56,332 [INFO] [MainThread] [root/update_service.py:404]: Background update checker started
+2026-05-17 12:02:56,333 [DEBUG] [MainThread] [qasync._windows._EventPoller/_windows.py:215]: Starting (proactor: <_IocpProactor overlapped#=0 result#=0>)...
+2026-05-17 12:02:56,335 [DEBUG] [Dummy-9] [qasync._windows._EventWorker/_windows.py:195]: Thread started
+2026-05-17 12:02:56,338 [DEBUG] [MainThread] [systray_widget/systray.py:526]: Loading state from C:\Users\Srinath\AppData\Local\YASB\systray_state_MLTDDISPLAY1.json
+2026-05-17 12:02:56,348 [DEBUG] [SystrayMonitor] [systray_widget/systray.py:57]: Systray thread is starting...
+2026-05-17 12:02:56,387 [INFO] [Dummy-6] [root/event_listener.py:125]: Komorebi connected to named pipe: yasb-3d7402d3-51ba-11f1-831f-b48c9d368940
+2026-05-17 12:02:56,691 [DEBUG] [MainThread] [systray_widget/systray.py:277]: Systray thread started
+2026-05-17 12:02:56,895 [DEBUG] [SystrayMonitor] [systray_widget/systray_monitor.py:164]: Adding TaskbandHWND prop to hwnd 8390418
+2026-05-17 12:02:56,902 [DEBUG] [SystrayMonitor] [systray_widget/systray_monitor.py:242]: Finding real tray hwnd
+2026-05-17 12:02:56,908 [DEBUG] [MainThread] [systray_widget/systray_monitor.py:157]: Sending TaskbarCreated message: 49360
