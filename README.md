@@ -1,38 +1,72 @@
 # Dot Files for Hyprland Arch Experience
+This repository contains my **dotfiles** for my Windows, and Arch system.
 
-This repository contains **dotfiles** for my devices
+
+## Devices  
+- **WSL-arch**: Windows Subsystem for Linux (Arch Distro)
+- **Windows**: Windows Config files 
+- **Arch Hyprland IGPU**: Arch linux with Hyprland on IGPU. 
+- **Arch Hyprland DGPU**: Arch linux with Hyprland on DGPU. 
 
 
-## Devices
-- **WSL_arch**
-- **Windows**
-- **Arch Hyprland**
+---
+## Packages Configs
 
-##  Installation
+The following package configs are available in this repository.
 
-Easily replicate this setup on any system using **GNU Stow**.
+### In Arch Linux
+- **Kitty**
+- **Hyprland suite** ( Hyprland, Hyprpaper, Hypridle, Hyprlock)
+- **btop**
+- **eww**
+- **fastfetch** 
+- **nvim** 
+- **rofi**
+- **starship**
+- **tmux**
+- **waybar**
 
-### **1️⃣ Clone the Repository**
+### In WSL
+- **btop**
+- **fastfetch**
+- **nvim**
+- **starship**
+- **tmux**
+
+### In Windows 
+- **AHK**
+- **Komorebi**
+- **Yasb**
+
+## Quick Set Up 
+
+#### Clone the repository:
 
 ```bash
 git clone https://github.com/Srindot/MeeDot-.-Files.git
 cd hyprland-dotfiles
 ```
+### Linux & Wsl
 
-2️⃣ Install GNU Stow
+For easy setup in linux and wsl, install GNU Stow for easy deployment through symbolic links:
+
+#### Install GNU Stow
 
 Make sure GNU Stow is installed:
 
 ```bash
 sudo pacman -S stow  # Arch-based systems
-```
 
-3️⃣ Deploy Dotfiles with Stow
-Run the following command to symlink the configurations:
+```
+#### Deploy Dotfiles with Stow
+
+Run the following command to deploy the dotfile through symlink :
 
 ```bash
 stow hyprland waybar rofi nvim kitty
-```
 
-This will correctly symlink the dotfiles into your ~/.config directory.
+```
+### Windows 
+
+For windows, there is no working stow alternative. Set up the symbolic links manually following the powershell commands.
 
