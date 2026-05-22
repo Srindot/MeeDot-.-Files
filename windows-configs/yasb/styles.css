@@ -1,0 +1,397 @@
+:root {
+    --rosewater: #ebbcba;
+    --flamingo: #ebbcba;
+    --pink: #ebbcba;
+    --mauve: #c4a7e7;
+    --red: #eb6f92;
+    --maroon: #eb6f92;
+    --peach: #f6c177;
+    --yellow: #f6c177;
+    --green: #31748f;
+    --teal: #9ccfd8;
+    --sky: #9ccfd8;
+    --sapphire: #31748f;
+    --blue: #31748f;
+    --lavender: #c4a7e7;
+    --text: #e0def4;
+    --subtext1: #908caa;
+    --subtext0: #908caa;
+    --overlay2: #6e6a86;
+    --overlay1: #6e6a86;
+    --overlay0: #6e6a86;
+    --surface2: #524f67;
+    --surface1: #403d52;
+    --surface0: #1f1d2e;
+    --base: #191724;
+    --mantle: rgba(33, 32, 46, 0.5);
+    --crust: rgba(18, 16, 26, 0.5);
+}
+
+* {
+    font-size: 12px;
+    color: var(--flamingo);
+    font-weight: 700;
+    font-family: "JetBrainsMono NFP";
+    margin: 0;
+    padding: 0;
+}
+
+.yasb-bar {
+    padding: 0 6px;
+    margin: 0;
+    background-color: rgba(31, 29, 46, 0.65);
+    border-radius: 12px;
+}
+
+.widget {
+    padding: 0 8px;
+    margin: 0;
+}
+
+.widget .label {
+    padding: 2px 2px 1px 2px;
+}
+
+.widget .label.alt {
+    padding: 1px 8px 1px 8px;
+}
+
+.clock-widget .label {
+    padding-left: 8px;
+}
+
+.komorebi-workspaces .widget-container {
+    margin-left: 0px;
+}
+
+.komorebi-workspaces .widget-container {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none
+}
+
+.komorebi-workspaces .offline-status {
+    color: var(--subtext1);
+    font-size: 12px;
+    padding: 0 0px;
+    font-weight: 600;
+}
+
+.komorebi-workspaces .ws-btn {
+    border: none;
+    background-color: var(--surface1);
+    margin: 0 4px;
+    min-height: 20px;
+    max-height: 20px;
+    border-radius: 10px;
+    padding: 0 16px;
+    color: rgba(0, 0, 0, 0);
+}
+
+.komorebi-workspaces .ws-btn:hover {
+    background-color: var(--surface2);
+}
+
+.komorebi-workspaces .ws-btn.populated {
+    background-color: var(--surface2);
+}
+
+.komorebi-workspaces .ws-btn.active {
+    background-color: var(--flamingo);
+    min-height: 20px;
+    max-height: 20px;
+    border-radius: 10px;
+    padding: 0 8px;
+}
+
+.komorebi-workspaces .ws-btn.active.populated {
+    background-color: var(--flamingo);
+}
+
+.komorebi-workspaces .ws-btn .label {
+    color: rgba(0, 0, 0, 0);
+    font-size: 1px;
+}
+
+.komorebi-workspaces .ws-btn .icon {
+    font-size: 18px !important;
+    margin: 0 4px;
+}
+
+.komorebi-active-layout {
+    padding: 0 0px 0 0;
+}
+
+.komorebi-active-layout .label {
+    font-weight: 600;
+    padding: 2px 0 0 0;
+}
+
+/*POWER MENU WIDGET*/
+/* Uptime text */
+.uptime {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: rgba(224, 222, 244, 0.726);
+    font-weight: 600;
+    font-family: "Segoe UI";
+}
+
+.power-menu-widget .label {
+    color: #eb6f92;
+    font-size: 16px;
+}
+
+.power-menu-popup .button {
+    padding: 0;
+    width: 160px;
+    height: 240px;
+    border-radius: 6px;
+    background-color: rgba(64, 61, 82, 0.75);
+    font-family: "Segoe UI";
+    color: #e0def4;
+    border: 4px solid rgba(255, 255, 255, 0);
+}
+
+.power-menu-popup .button.hover {
+    background-color: rgb(82, 79, 103);
+    border: 4px solid rgb(82, 79, 103);
+}
+
+.power-menu-popup .button .label {
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(224, 222, 244, 0.6);
+    font-family: "Segoe UI";
+}
+
+.power-menu-popup .button .icon {
+    font-size: 64px;
+    padding-top: 54px;
+    color: rgba(224, 222, 244, 0.25);
+}
+
+.power-menu-popup .button.cancel .icon {
+    color: rgba(235, 111, 146, 0.55);
+}
+
+.power-menu-popup .button.cancel .label {
+    color: rgba(235, 111, 146, 0.95);
+}
+
+.wifi-widget {
+    padding: 0 4px 0 9px;
+    border-top-left-radius: 18px;
+    border-bottom-left-radius: 18px;
+}
+
+.wifi-widget .icon {
+    color: var(--flamingo);
+}
+
+/* ICONS */
+.icon {
+    font-size: 16px;
+}
+
+.volume-widget .icon {
+    font-size: 15px;
+    color: var(--flamingo);
+    margin: 1px 3px 1px 0px;
+}
+
+.start-menu .icon {
+    font-size: 18px;
+    color: var(--flamingo);
+}
+
+.power-menu-widget .icon {
+    color: var(--maroon);
+}
+
+.clock-widget .icon {
+    color: var(--flamingo);
+    font-size: 14px;
+}
+
+/* WEATHER WIDGET */
+.weather-widget .icon {
+    font-size: 16px;
+    margin: 0 2px 0px 0;
+}
+
+.weather-widget .label {
+    padding-right: 0px;
+}
+
+.weather-widget .icon.sunnyDay {
+    color: rgb(246, 193, 119);
+}
+
+.weather-widget .icon.clearNight {
+    color: rgb(156, 207, 216);
+    font-size: 20px;
+    margin: -1px 2px 0px 0;
+}
+
+.weather-widget .icon.rainyNight {
+    font-size: 16px;
+}
+
+.weather-widget .icon.cloudyDay {
+    font-size: 18px;
+    color: rgb(246, 193, 119);
+}
+
+.weather-widget .icon.rainyDay {
+    color: rgb(235, 188, 186)
+}
+
+.media-widget {
+    padding: 0;
+    margin: 0;
+}
+
+.media-widget .label {
+    color: var(--lavender);
+    padding: 0px;
+    padding-right: 16px;
+}
+
+.media-widget .btn {
+    color: var(--overlay1);
+    padding: 0 0px;
+    padding-right: 0px;
+    margin: 4px 0;
+    font-family: Segoe Fluent Icons;
+}
+
+.media-widget .btn:hover {
+    color: var(--subtext0);
+}
+
+.media-widget .btn.play {
+    font-size: 16px;
+}
+
+.media-widget .btn.prev {
+    padding: 0 0px 0 0px;
+    font-size: 12px;
+}
+
+.media-widget .btn.next {
+    padding: 0 8px 0 0px;
+    font-size: 12px;
+}
+
+.media-widget .btn.disabled:hover,
+.media-widget .btn.disabled {
+    color: var(--surface1);
+    font-size: 12px;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.wallpapers-widget {
+    padding: 0 6px 0 6px;
+}
+
+.wallpapers-widget .icon {
+    font-size: 16px;
+    color: var(--mauve);
+}
+
+.wallpapers-gallery-window {
+    background-color: rgba(25, 23, 36, 220);
+    border: 0;
+    margin: 0;
+}
+
+.wallpapers-gallery-buttons {
+    background-color: rgba(255, 255, 255, 0);
+    color: var(--text);
+    border: none;
+    font-size: 14px;
+    padding: 8px 0;
+    border-radius: 8px;
+    margin: 0 8px 8px 8px;
+    width: 600px;
+}
+
+.wallpapers-gallery-buttons:hover {
+    background-color: rgba(224, 222, 244, 0.1)
+}
+
+.wallpapers-gallery-image {
+    border: 4px solid transparent;
+    border-radius: 10px;
+}
+
+.wallpapers-gallery-image:hover {
+    border: 6px solid var(--surface1);
+}
+
+.wallpapers-gallery-image.focused {
+    border: 6px solid var(--pink);
+}
+
+.wifi-widget .icon {
+    font-size: 17px;
+    color: var(--sapphire);
+    padding-right: 0px;
+    padding-left: 0px;
+    margin: 0;
+}
+
+.update-check-widget {
+    padding: 0 4px 0 0px;
+}
+
+.update-check-widget .icon {
+    font-size: 16px;
+}
+
+.update-check-widget .widget-container.winget,
+.update-check-widget .widget-container.windows {
+    background: var(--blue);
+    margin: 7px 2px 7px 2px;
+    border-radius: 10px;
+    border: 0px solid var(--sapphire);
+}
+
+.update-check-widget .widget-container.winget .icon,
+.update-check-widget .widget-container.windows .icon {
+    color: var(--base);
+    margin: 0 2px 0 6px;
+}
+
+.update-check-widget .widget-container.winget .label,
+.update-check-widget .widget-container.windows .label {
+    margin: 0 6px 0 1px;
+    color: var(--base);
+    font-weight: 900;
+    font-size: 14px;
+}
+
+.obs-widget {
+    padding: 0 6px;
+}
+
+.obs-widget .recording {
+    font-size: 18px;
+    color: #eb6f92;
+}
+
+.obs-widget .paused {
+    font-size: 18px;
+    color: var(--surface2);
+}
+
+.obs-widget .stopped {
+    font-size: 18px;
+    color: var(--surface1);
+}
+
+.active-window-widget .widget-container .label {
+    color: var(--overlay0);
+}
